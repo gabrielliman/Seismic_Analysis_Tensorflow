@@ -1,0 +1,8 @@
+pycache
+unused
+tmp
+results
+results_nocheckpoint
+checkpoints
+*.sh
+**/__pycache__/
