@@ -1,6 +1,7 @@
 import argparse
 import tensorflow as tf
 import numpy as np
+import os
 from models.attention import Attention_unet
 from models.unet import Unet
 from models.unet3plus import Unet_3plus
@@ -44,7 +45,9 @@ if __name__ == '__main__':
   elif(args.model==2):
       model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
-
+  
+  if not os.path.exists('./checkpoints/'+args.folder):
+     os.makedirs('./checkpoints/'+args.folder)
   callbacks = [
       tf.keras.callbacks.EarlyStopping(
           # Stop training when `val_loss` is no longer improving
@@ -88,6 +91,15 @@ if __name__ == '__main__':
   
   model.load_weights(checkpoint_filepath)
 
+  if not os.path.exists('./results/'+args.folder):
+    os.makedirs('./results/'+args.folder)
+
+  if not os.path.exists('./results/'+args.folder+'/graphs'):
+    os.makedirs('./results/'+args.folder+'/graphs')
+  
+  if not os.path.exists('./results/'+args.folder+'/tables'):
+        os.makedirs('./results/'+args.folder+'/tables')
+  
   if args.model==1:
     fig, axis = plt.subplots(1, 2, figsize=(20, 5))
     axis[0].plot(history.history["unet3plus_output_final_activation_loss"], color='r', label = 'train loss')
@@ -117,9 +129,7 @@ if __name__ == '__main__':
   # model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
   make_prediction(args.name,args.folder,model, test_image, test_label)
   f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
-  #função de perda
   model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
-  #posso adicionar as informações de stride dps
   f.write(model_info)
   stride_info="\n\nStride Train: "+str(stride1)+"x"+str(args.stridetrain)+"\nStride Validation: "+str(stride1)+"x"+str(strideval2)+"\nStride Test: "+str(stride1)+"x"+str(stridetest2)
   f.write(stride_info)

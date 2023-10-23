@@ -1,7 +1,7 @@
 pycache
 unused
 tmp
-results
+results/*
 results_nocheckpoint
 checkpoints
 *.sh
