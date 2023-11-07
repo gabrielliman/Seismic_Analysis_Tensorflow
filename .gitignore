@@ -3,6 +3,6 @@
 # tmp
 # results/*
 # results_nocheckpoint
-checkpoints
+checkpoints/*
 # *.sh
 # **/__pycache__/
