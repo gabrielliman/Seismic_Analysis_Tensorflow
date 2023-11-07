@@ -1,0 +1,11 @@
+Patches de 576x192
+Sparce Cross Entropy
+Variação da função de otimização
+    Adam
+    RMS (Raiz do erro quadrado médio)
+    SGD (Stochastic gradient descent)
+Modelos Utilizados
+    UNet
+    Attention UNet
+    Unet 3+
+200  épocas com early stopping (delta=1e-5, patience=30)

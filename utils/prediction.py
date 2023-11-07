@@ -47,14 +47,6 @@ def calculate_micro_f1_score(true_positives, false_positives, false_negatives):
 def calculate_class_info(model, test_image, test_label, num_classes, predicted_label):
     """
     Calculate the pixel-wise accuracy, precision, and recall for each class of the model on the given test data.
-
-    Args:
-        model (torch.nn.Module): The PyTorch model to evaluate.
-        test_data (list): A list of tuples, each containing a 2-dimensional test sample (image) and its corresponding label (image).
-        num_classes (int): The number of classes in the dataset.
-
-    Returns:
-        dict: A dictionary containing pixel-wise accuracy, precision, and recall for each class.
     """
     # Initialize counters for true positives, false positives, and false negatives for each class
     true_positives = [0] * num_classes

@@ -1,0 +1,14 @@
+Patches de 576x192
+Variação do gamma na função focal loss
+    Baixa= 0.25
+    Média(recomendada pelo artigo)= 2
+    Alta= 4
+Variação da função de otimização
+    Adam
+    RMS (Raiz do erro quadrado médio)
+    SGD (Stochastic gradient descent)
+Modelos Utilizados
+    UNet
+    Attention UNet
+    Unet 3+
+100  épocas com early stopping (delta=1e-4, patience=10)

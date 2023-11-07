@@ -1,0 +1,4 @@
+OPT: Adam
+batch size: 16
+camadas: 16, 32, 64, 128, 256, 512
+learning rate: 1e-4
