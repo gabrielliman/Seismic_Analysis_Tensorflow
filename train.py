@@ -46,8 +46,9 @@ if __name__ == '__main__':
     model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
       model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
-  elif(args.model==3):
-      model = BridgeNet_1()
+  #NAO FUNCIONA
+  # elif(args.model==3):
+  #     model = BridgeNet_1()
 
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
 
