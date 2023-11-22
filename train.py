@@ -8,7 +8,7 @@ from models.unet3plus import Unet_3plus
 from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data
 from utils.prediction import make_prediction, seisfacies_predict, calculate_class_info, calculate_macro_f1_score
-from models.bridgenet import BridgeNet_1
+# from models.bridgenet import BridgeNet_1
 import matplotlib.pyplot as plt
 from functools import partial
 from bayes_opt import BayesianOptimization
