@@ -8,6 +8,7 @@ from models.unet3plus import Unet_3plus
 from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data
 from utils.prediction import make_prediction
+from models.bridgenet import BridgeNet_1
 import matplotlib.pyplot as plt
 
 def get_args():
@@ -38,16 +39,20 @@ if __name__ == '__main__':
   strideval2=16
   stridetest2=16
   train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
-  
   #Definition of Models
   if(args.model==0):
     model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
   elif(args.model==1):
-    model = Unet_3plus(input_size=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
+    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
       model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
+  elif(args.model==3):
+      model = BridgeNet_1()
 
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
+
+  if not os.path.exists('./checkpoints'):
+     os.makedirs('./checkpoints')
 
   if not os.path.exists('./checkpoints/'+args.folder):
      os.makedirs('./checkpoints/'+args.folder)
@@ -72,7 +77,7 @@ if __name__ == '__main__':
 
   #Definition of Optimizers
   if(args.optimizer==0):
-     opt=tf.keras.optimizers.Adam()
+     opt=tf.keras.optimizers.Adam(learning_rate=1e-4)
      opt_name="Adam"
   elif(args.optimizer==1):
      opt=tf.keras.optimizers.SGD()

@@ -1,1 +1,0 @@
-Percebi que em alguns casos o f1 diminui aumentando o numero de epocas, mas a acuracia final aumentou, isso se deve a o treino utilizando como parametro a a curacia da validacao assim como feito no artigo

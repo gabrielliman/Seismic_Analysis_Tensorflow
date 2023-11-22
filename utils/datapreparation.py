@@ -26,10 +26,14 @@ def extract_patches(input_array, patch_shape, stride):
     return patches
 
 def my_division_data(shape=(992,576),stridetest=(230,14), strideval=(230,14), stridetrain=(8,8)):
-    read_seis_data = np.load('/scratch/nuneslima/seismic_data/data_train.npz', 
+    read_seis_data = np.load(
+        #'/home/gabriel/IC_seismic/seismic_data/data_train.npz',
+        '/scratch/nuneslima/seismic_data/data_train.npz', 
                 allow_pickle=True, mmap_mode = 'r')
     # We read our labels
-    read_labels = np.load('/scratch/nuneslima/seismic_data/labels_train.npz',
+    read_labels = np.load(
+        #'/home/gabriel/IC_seismic/seismic_data/labels_train.npz',
+        '/scratch/nuneslima/seismic_data/labels_train.npz',
                     allow_pickle=True, mmap_mode = 'r')
 
     # Inside the elements we pick what we are interesed in
