@@ -1,2 +1,2 @@
-python train.py -m 2 --name "attention_bayes" -o 0 --bayes_opt True -s2 128 --stridetrain 64 --delta 1e-4 --patience 3 --loss_function 0 --folder "bayes" --init_points 3 --num_iter 7 --epochs 30
+python train.py -m 2 --name "attention_bayes" -o 0 --bayes_opt True -s2 192 --stridetrain 64 --delta 1e-4 --patience 3 --loss_function 0 --folder "bayes" --init_points 10 --num_iter 20 --epochs 100
 s2 antes tava 192

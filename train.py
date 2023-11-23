@@ -47,14 +47,14 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
     
-    model.load_weights(checkpoint_filepath)
+    # model.load_weights(checkpoint_filepath)
     
     # score = model.evaluate((test_image,test_label), steps = 10, verbose=1)
 
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
-    f = open("bayes_opt/first_test.txt", "a")
+    f = open("bayes_opt/second_test.txt", "a")
     f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
     f.write('\nTest F1: '+ str(round(macro_f1,5)))
     f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
@@ -225,12 +225,12 @@ if __name__ == '__main__':
     logger = JSONLogger(path="./bayes_opt/logs.log")
     
     bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
-    f = open("bayes_opt/first_test.txt", "w")
-    f.close()
+    #f = open("bayes_opt/first_test.txt", "w")
+    # f.close()
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
-    f = open("bayes_opt/best_result.txt", "w")
+    f = open("bayes_opt/best_result2.txt", "a")
     for i, res in enumerate(bayes_optimizer.res):
         f.write(f"Iteration {i}: \n\t{res}")
 
-    f.write(bayes_optimizer.max)
+    f.write(str(bayes_optimizer.max))
     f.close()
