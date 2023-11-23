@@ -96,8 +96,8 @@ def my_division_data(shape=(992,576),stridetest=(230,14), strideval=(230,14), st
     testslices=np.array(testpatches)
     testlabels=np.array(testlabels)
 
-    #return trainslices, trainlabels, testslices, testlabels, valslices, vallabels
-    return trainslices[:100], trainlabels[:100], testslices[:100], testlabels[:100], valslices[:100], vallabels[:100]
+    return trainslices, trainlabels, testslices, testlabels, valslices, vallabels
+    #return trainslices[:100], trainlabels[:100], testslices[:100], testlabels[:100], valslices[:100], vallabels[:100]
 
 
 

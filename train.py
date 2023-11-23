@@ -43,11 +43,9 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
                         loss=loss,
                       metrics=['acc'])
 
-    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=3,
+    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=50,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
-    print(history)
-
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
@@ -217,8 +215,10 @@ if __name__ == '__main__':
       random_state = 1)
     
     logger = JSONLogger(path="./bayes_opt/logs.log")
+    
     bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
-
+    f = open("bayes_opt/first_test.txt", "w")
+    f.close()
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
 
     for i, res in enumerate(bayes_optimizer.res):
