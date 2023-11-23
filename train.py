@@ -46,15 +46,21 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
     history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=epochs,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
-    predicted_label = seisfacies_predict(model,test_image)
-    class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
-    macro_f1, class_f1=calculate_macro_f1_score(class_info)
+    
+    score = model.evaluate((test_image,test_label), steps = 10, verbose=1)
+
+    # predicted_label = seisfacies_predict(model,test_image)
+    # class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
+    # macro_f1, class_f1=calculate_macro_f1_score(class_info)
     f = open("bayes_opt/first_test.txt", "a")
     f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
-    f.write('Test F1: '+ str(round(macro_f1,3)))
-    f.write('\nTest accuracy: ' + str(round(micro_f1,3)))
+    # f.write('Test F1: '+ str(round(macro_f1,3)))
+    # f.write('\nTest accuracy: ' + str(round(micro_f1,3)))
+    f.write('\nTest Loss: ' + str(round(score[0],3)))
+    f.write('\nTest accuracy: ' + str(round(score[1],3)))
     f.write('\n\n')
-    return macro_f1
+    # return macro_f1
+    return score[1]
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
