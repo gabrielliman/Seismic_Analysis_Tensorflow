@@ -15,7 +15,7 @@ from bayes_opt import BayesianOptimization
 from bayes_opt.logger import JSONLogger
 from bayes_opt.event import Events
 
-def train_opt(model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs, gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath, gamma, lr, batch_size, loss_function=1,optimizer=0):
     print(gamma)
     print(batch_size)
     print(lr)
@@ -46,6 +46,8 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
     history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=epochs,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
+    
+    model.load_weights(checkpoint_filepath)
     
     score = model.evaluate((test_image,test_label), steps = 10, verbose=1)
 
@@ -208,7 +210,7 @@ if __name__ == '__main__':
     f.close()
 
   else:
-    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs)
+    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
 
     bounds = {
       'gamma'        :(0.1, 10),
