@@ -92,8 +92,8 @@ if __name__ == '__main__':
   slice_shape2=args.slice_shape2
   num_classes=6
   stride1=16
-  strideval2=16
-  stridetest2=16
+  strideval2=100
+  stridetest2=100
   train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
   #Definition of Models
   if(args.model==0):
@@ -171,7 +171,7 @@ if __name__ == '__main__':
       os.makedirs('./results/'+args.folder+'/graphs')
     
     if not os.path.exists('./results/'+args.folder+'/tables'):
-          os.makedirs('./results/'+args.folder+'/tables')
+        os.makedirs('./results/'+args.folder+'/tables')
     
     #Creation of training graphs with Loss and Accuracy, of Validation and Training, by Epoch
     if args.model==1:
