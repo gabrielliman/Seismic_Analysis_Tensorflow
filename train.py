@@ -51,7 +51,7 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
-    f = open("bayes_opt/first_test", "a")
+    f = open("bayes_opt/first_test.txt", "a")
     f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
     f.write('Test F1:', macro_f1)
     f.write('Test accuracy:', micro_f1)
