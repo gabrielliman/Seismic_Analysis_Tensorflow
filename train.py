@@ -15,7 +15,7 @@ from bayes_opt import BayesianOptimization
 from bayes_opt.logger import JSONLogger
 from bayes_opt.event import Events
 
-def train_opt(model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs, gamma, lr, batch_size, loss_function=1,optimizer=0):
     print(gamma)
     print(batch_size)
     print(lr)
@@ -43,7 +43,7 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
                         loss=loss,
                       metrics=['acc'])
 
-    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=30,
+    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=epochs,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
     predicted_label = seisfacies_predict(model,test_image)
@@ -202,7 +202,7 @@ if __name__ == '__main__':
     f.close()
 
   else:
-    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label)
+    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs)
 
     bounds = {
       'gamma'        :(0.1, 10),
