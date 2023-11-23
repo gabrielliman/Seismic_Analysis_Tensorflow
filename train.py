@@ -56,8 +56,8 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
     f = open("bayes_opt/first_test.txt", "a")
     f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
-    f.write('Test F1: '+ str(round(macro_f1,3)))
-    f.write('\nTest accuracy: ' + str(round(micro_f1,3)))
+    f.write('\nTest F1: '+ str(round(macro_f1,5)))
+    f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
     # f.write('\nTest Loss: ' + str(round(score[0],3)))
     # f.write('\nTest accuracy: ' + str(round(score[1],3)))
     f.write('\n\n')
@@ -215,7 +215,7 @@ if __name__ == '__main__':
     bounds = {
       'gamma'        :(0.1, 10),
       'lr'           :(1e-4, 1e-2),
-      'batch_size'   :(1, 16.001)}
+      'batch_size'   :(4, 20.001)}
     bayes_optimizer = BayesianOptimization(
       f            = fit_with_partial,
       pbounds      = bounds,
