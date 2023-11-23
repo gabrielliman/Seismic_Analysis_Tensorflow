@@ -53,9 +53,9 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
     f = open("bayes_opt/first_test.txt", "a")
     f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
-    f.write('Test F1:', macro_f1)
-    f.write('Test accuracy:', micro_f1)
-    f.write('\n')
+    f.write('Test F1: '+ str(round(macro_f1,3)))
+    f.write('\nTest accuracy: ' + str(round(micro_f1,3)))
+    f.write('\n\n')
     return macro_f1
 
 def get_args():
@@ -217,7 +217,7 @@ if __name__ == '__main__':
     logger = JSONLogger(path="./bayes_opt/logs.log")
     bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
 
-    bayes_optimizer.maximize(init_points = 0, n_iter = 10,)
+    bayes_optimizer.maximize(init_points = 20, n_iter = 10,)
 
     for i, res in enumerate(bayes_optimizer.res):
         print("Iteration {}: \n\t{}".format(i, res))
