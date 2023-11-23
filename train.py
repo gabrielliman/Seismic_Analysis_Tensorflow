@@ -220,8 +220,9 @@ if __name__ == '__main__':
     f = open("bayes_opt/first_test.txt", "w")
     f.close()
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
-
+    f = open("bayes_opt/best_result.txt", "w")
     for i, res in enumerate(bayes_optimizer.res):
-        print("Iteration {}: \n\t{}".format(i, res))
+        f.write(f"Iteration {i}: \n\t{res}")
 
-    print(bayes_optimizer.max)
+    f.write(bayes_optimizer.max)
+    f.close()
