@@ -12,8 +12,13 @@ from utils.prediction import make_prediction, seisfacies_predict, calculate_clas
 import matplotlib.pyplot as plt
 from functools import partial
 from bayes_opt import BayesianOptimization
+from bayes_opt.logger import JSONLogger
+from bayes_opt.event import Events
 
-def train_opt(model,callbacks,test_image,test_label,gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, gamma, lr, batch_size, loss_function=1,optimizer=0):
+    print(gamma)
+    print(batch_size)
+    print(lr)
     #Definition of Optimizers
     if(optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=lr)
@@ -38,18 +43,19 @@ def train_opt(model,callbacks,test_image,test_label,gamma, lr, batch_size, loss_
                         loss=loss,
                       metrics=['acc'])
 
-    model.fit(train_image, train_label, batch_size=batch_size, epochs=50,
+    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=3,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
-    
+    print(history)
 
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
-    print(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
-    print('Test F1:', macro_f1)
-    print('Test accuracy:', micro_f1)
-    print('\n')
+    f = open("bayes_opt/first_test", "a")
+    f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
+    f.write('Test F1:', macro_f1)
+    f.write('Test accuracy:', micro_f1)
+    f.write('\n')
     return macro_f1
 
 def get_args():
@@ -118,6 +124,8 @@ if __name__ == '__main__':
       )
   ]
   if(not args.bayes_opt):
+    if not os.path.exists('./bayes_opt'):
+     os.makedirs('./bayes_opt')
     #Definition of Optimizers
     if(args.optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=1e-4)
@@ -194,18 +202,22 @@ if __name__ == '__main__':
     f.close()
 
   else:
-    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label)
+    fit_with_partial = partial(train_opt,model,callbacks,test_image,test_label,train_image, train_label, val_image, val_label)
 
-    bounds = {'lr'           :(1e-4, 1e-2),
-        'batch_size'   :(1, 16.001),
-        'gamma'        :(0.1, 10) }
+    bounds = {
+      'gamma'        :(0.1, 10),
+      'lr'           :(1e-4, 1e-2),
+      'batch_size'   :(1, 16.001)}
     bayes_optimizer = BayesianOptimization(
       f            = fit_with_partial,
       pbounds      = bounds,
       verbose      = 1,  # verbose = 1 prints only when a maximum is observed, verbose = 0 is silent
       random_state = 1)
+    
+    logger = JSONLogger(path="./bayes_opt/logs.log")
+    bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
 
-    bayes_optimizer.maximize(init_points = 10, n_iter = 5,)
+    bayes_optimizer.maximize(init_points = 0, n_iter = 10,)
 
     for i, res in enumerate(bayes_optimizer.res):
         print("Iteration {}: \n\t{}".format(i, res))
