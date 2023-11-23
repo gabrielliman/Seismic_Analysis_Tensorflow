@@ -74,6 +74,8 @@ def get_args():
     parser.add_argument('--loss_function', '-l', dest='loss_function', metavar='L', type=int, default=0, help="Choose loss function, 0= Cross Entropy, 1= Focal Loss")
     parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
     parser.add_argument('--bayes_opt', type=bool, default=False, help='Activates the use of bayesian optimizer')
+    parser.add_argument('--init_points', type=int, default=0, help="number of init points on bayes optimizer")
+    parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -217,7 +219,7 @@ if __name__ == '__main__':
     logger = JSONLogger(path="./bayes_opt/logs.log")
     bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
 
-    bayes_optimizer.maximize(init_points = 20, n_iter = 10,)
+    bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
 
     for i, res in enumerate(bayes_optimizer.res):
         print("Iteration {}: \n\t{}".format(i, res))
