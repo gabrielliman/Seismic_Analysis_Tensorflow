@@ -43,7 +43,7 @@ def train_opt(model,callbacks,test_image,test_label,train_image, train_label, va
                         loss=loss,
                       metrics=['acc'])
 
-    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=50,
+    history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=30,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
     predicted_label = seisfacies_predict(model,test_image)
