@@ -54,7 +54,7 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
-    f = open("bayes_opt/train_logs/"+str(name)+"_test.txt", "a")
+    f = open("./bayes_opt/train_logs/"+str(name)+"_test.txt", "a")
     f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernelsize}, filters = {filters}, dropout rate = {dropout_rate}")
     f.write('\nTest F1: '+ str(round(macro_f1,5)))
     f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
@@ -157,7 +157,7 @@ if __name__ == '__main__':
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
 
     #saving results
-    f = open("bayes_opt/train_logs/"+str(args.name)+"_results.txt", "w")
+    f = open("./bayes_opt/train_logs/"+str(args.name)+"_results.txt", "w")
     for i, res in enumerate(bayes_optimizer.res):
         f.write(f"Iteration {i}: \n\t{res}")
 
