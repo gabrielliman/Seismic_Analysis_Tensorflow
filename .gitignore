@@ -6,4 +6,5 @@ pycache
 checkpoints/*
 # *.sh
 **/__pycache__/
-train.ipynb
+test.ipynb
+notes.txt
