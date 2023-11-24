@@ -157,7 +157,7 @@ def attentionunet(input_shape, dropout=0.2, batchnorm=True):
 
 
 
-def adaptableattentionunet(input_shape, filters=[16, 32, 64, 128, 256], kernelsize=3, dropout=0.2, upsample_size=2, batchnorm=True):
+def adaptable_attentionunet(input_shape, filters=[16, 32, 64, 128, 256], kernelsize=3, dropout=0.2, upsample_size=2, batchnorm=True):
     inputs = layers.Input(input_shape)
     numfilters = len(filters)
 
