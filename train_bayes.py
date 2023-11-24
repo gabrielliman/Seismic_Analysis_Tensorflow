@@ -15,7 +15,7 @@ from bayes_opt.event import Events
 from bayes_opt.util import load_logs
 
 
-def train_opt(callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernelsize, gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(name, callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernelsize, gamma, lr, batch_size, loss_function=1,optimizer=0):
 
     filters=[]
     for i in range(0,int(num_filters)):
@@ -54,8 +54,8 @@ def train_opt(callbacks,test_image,test_label,train_image, train_label, val_imag
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
-    f = open("bayes_opt/second_test.txt", "a")
-    f.write(f"TESTE COM GAMMA = {gamma}, learning_rate = {lr}, batch_size = {batch_size}")
+    f = open("bayes_opt/train_logs/"+str(name)+"_test.txt", "a")
+    f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernelsize}, filters = {filters}, dropout rate = {dropout_rate}")
     f.write('\nTest F1: '+ str(round(macro_f1,5)))
     f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
     f.write('\n\n')
@@ -100,7 +100,13 @@ if __name__ == '__main__':
         os.makedirs('./checkpoints')
 
     if not os.path.exists('./checkpoints/'+args.folder):
-        os.makedirs('./checkpoints/'+args.folder)
+       os.makedirs('./checkpoints/'+args.folder)
+    
+    #cleaning file
+    f = open("bayes_opt/train_logs/"+str(args.name)+"_test.txt", "w")
+    f.close()
+
+
 
     #Callback function   
     callbacks = [
@@ -120,8 +126,8 @@ if __name__ == '__main__':
         )
     ]
 
-    fit_with_partial = partial(train_opt,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
-
+    fit_with_partial = partial(train_opt,args.name,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
+    #bounds definition
     bounds = {
         'num_filters'  :(1, 6.1),
         'gamma'        :(0.1, 10),
@@ -129,6 +135,7 @@ if __name__ == '__main__':
         'batch_size'   :(4, 20.001),
         'kernel_size'  :(2.99, 7.1),
         'dropout_rate' :(0.0,0.7)}
+    
     bayes_optimizer = BayesianOptimization(
         f            = fit_with_partial,
         pbounds      = bounds,
@@ -137,13 +144,20 @@ if __name__ == '__main__':
 
     logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
 
+    #saving logs of the optimization
     bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
     #i will run with 20,10 and 10,20 for now
     logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
 
-    load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log"])
+    #loading previous logs
+    if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log"):
+        load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log"])
+
+    #training
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
-    f = open("bayes_opt/best_result2.txt", "a")
+
+    #saving results
+    f = open("bayes_opt/train_logs/"+str(args.name)+"_results.txt", "w")
     for i, res in enumerate(bayes_optimizer.res):
         f.write(f"Iteration {i}: \n\t{res}")
 
