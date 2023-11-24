@@ -186,5 +186,4 @@ def adaptable_attentionunet(input_shape, filters=[16, 32, 64, 128, 256], kernel_
 
     # Model summary
     model = models.Model(inputs=[inputs], outputs=[outputs])
-    model.summary()
     return model
