@@ -154,7 +154,7 @@ if __name__ == '__main__':
     logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
 
     #loading previous logs
-    if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log"):
+    if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
         load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log"])
         print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
     else:
