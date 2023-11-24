@@ -15,12 +15,12 @@ from bayes_opt.event import Events
 from bayes_opt.util import load_logs
 
 
-def train_opt(name, callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernelsize, gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(name, callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernel_size, gamma, lr, batch_size, loss_function=1,optimizer=0):
 
     filters=[]
     for i in range(0,int(num_filters)):
        filters.append(2**(4+i))
-    model=adaptable_attentionunet(input_shape=(992,192,1),filters=filters, kernelsize=closest_odd_number(kernelsize), dropout=dropout_rate)
+    model=adaptable_attentionunet(input_shape=(992,192,1),filters=filters, kernel_size=closest_odd_number(kernel_size), dropout=dropout_rate)
     #Definition of Optimizers
     if(optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=lr)
@@ -55,7 +55,7 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
     with open("./bayes_opt/train_logs/"+str(name)+"_test.txt", "a") as f:
-        f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernelsize}, filters = {filters}, dropout rate = {dropout_rate}")
+        f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernel_size}, filters = {filters}, dropout rate = {dropout_rate}")
         f.write('\nTest F1: '+ str(round(macro_f1,5)))
         f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
         f.write('\n\n')
