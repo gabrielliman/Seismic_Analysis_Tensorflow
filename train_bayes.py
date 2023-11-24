@@ -2,7 +2,7 @@ import argparse
 import tensorflow as tf
 import numpy as np
 import os
-from models.newmodel import adaptable_attentionunet
+from models.attention import Attention_unet
 from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data
 from utils.generaluse import closest_odd_number
@@ -20,7 +20,7 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
     filters=[]
     for i in range(0,int(num_filters)):
        filters.append(2**(4+i))
-    model=adaptable_attentionunet(input_shape=(992,192,1),filters=filters, kernel_size=closest_odd_number(kernel_size), dropout=dropout_rate)
+    model=Attention_unet(tam_entrada=(992,192,1),num_filtros=filters,classes=6, kernel_size=closest_odd_number(kernel_size), dropout_rate=dropout_rate)
     #Definition of Optimizers
     if(optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=lr)
