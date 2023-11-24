@@ -146,12 +146,6 @@ if __name__ == '__main__':
         verbose      = 1,  # verbose = 1 prints only when a maximum is observed, verbose = 0 is silent
         random_state = 1)
 
-    logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
-
-    #saving logs of the optimization
-    bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
-    #i will run with 20,10 and 10,20 for now
-    logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
 
     #loading previous logs
     if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
@@ -160,7 +154,13 @@ if __name__ == '__main__':
     else:
         print(f"\n\n{os.getcwd()}\n\n")
 
-    #training
+
+    #saving logs of the optimization
+    logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
+    bayes_optimizer.subscribe(Events.OPTIMIZATION_STEP, logger)
+
+
+    ##i will run with 20,10 and 10,20 for now
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
 
     #saving results
