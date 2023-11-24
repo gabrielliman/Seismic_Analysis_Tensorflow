@@ -5,7 +5,7 @@ import os
 from models.attention import Attention_unet
 from models.unet import Unet
 from models.unet3plus import Unet_3plus
-from models.newmodel import adaptable_attentionunet
+from models.newmodel import attentionunet
 from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data
 from utils.prediction import make_prediction
@@ -59,7 +59,8 @@ if __name__ == '__main__':
   elif(args.model==2):
       model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
   elif (args.model==4):
-     model=adaptable_attentionunet((992,192,1), filters = [16, 32, 64, 128, 256, 512], kernel_size=3, dropout=0.2, upsample_size = 2, batchnorm=True)
+     #PRECISO CONSERTAR PORQUE TA RUIM PRA CARLHO
+     model=attentionunet((992,192,1), dropout=0.2, batchnorm=True)
   #NAO FUNCIONA
   # elif(args.model==3):
   #     model = BridgeNet_1()
