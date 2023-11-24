@@ -94,12 +94,7 @@ if __name__ == '__main__':
     strideval2=100
     stridetest2=100
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
-    train_image=train_image[:100]
-    train_label=train_label[:100]
-    test_image=test_image[:100]
-    test_label=test_label[:100]
-    val_image=val_image[:100]
-    val_label=val_label[:100]
+
 
     checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
 
@@ -139,11 +134,11 @@ if __name__ == '__main__':
     #bounds definition
     bounds = {
         'num_filters'  :(3, 6.1),
-        'gamma'        :(0.1, 10),
+        'gamma'        :(2, 10),
         'lr'           :(1e-4, 1e-2),
         'batch_size'   :(4, 20.001),
         'kernel_size'  :(2.99, 7.1),
-        'dropout_rate' :(0.0,0.7)}
+        'dropout_rate' :(0.0,0.5)}
     
     bayes_optimizer = BayesianOptimization(
         f            = fit_with_partial,
