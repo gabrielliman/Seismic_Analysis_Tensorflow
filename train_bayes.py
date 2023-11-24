@@ -94,7 +94,12 @@ if __name__ == '__main__':
     strideval2=100
     stridetest2=100
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
-
+    train_image=train_image[:100]
+    train_label=train_label[:100]
+    test_image=test_image[:100]
+    test_label=test_label[:100]
+    val_image=val_image[:100]
+    val_label=val_label[:100]
 
     checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
 
