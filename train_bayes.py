@@ -40,6 +40,8 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
       loss=SparseCategoricalFocalLoss(gamma=gamma, from_logits=True)
       loss_name="Sparce Categorical Focal Loss, Gamma: " + str(gamma)
 
+    print(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernel_size}, filters = {filters}, dropout rate = {dropout_rate}")
+
     #Model Compilation and Training
     model.compile(optimizer=opt,
                         loss=loss,
