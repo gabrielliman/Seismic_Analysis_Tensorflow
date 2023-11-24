@@ -133,7 +133,7 @@ if __name__ == '__main__':
     fit_with_partial = partial(train_opt,args.name,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
     #bounds definition
     bounds = {
-        'num_filters'  :(1, 6.1),
+        'num_filters'  :(3, 6.1),
         'gamma'        :(0.1, 10),
         'lr'           :(1e-4, 1e-2),
         'batch_size'   :(4, 20.001),
@@ -156,6 +156,7 @@ if __name__ == '__main__':
     #loading previous logs
     if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log"):
         load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log"])
+        print("New optimizer is now aware of {} points.".format(len(bayes_optimizer.space)))
 
     #training
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)

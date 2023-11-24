@@ -151,8 +151,7 @@ def attentionunet(input_shape, dropout=0.2, batchnorm=True):
     conv_final = layers.BatchNormalization(axis=3)(conv_final)
     outputs = layers.Activation('sigmoid')(conv_final)  
 
-    model = models.Model(inputs=[inputs], outputs=[outputs])
-    model.summary()       
+    model = models.Model(inputs=[inputs], outputs=[outputs])      
     return model    
 
 
