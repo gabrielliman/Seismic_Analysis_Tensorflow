@@ -156,7 +156,9 @@ if __name__ == '__main__':
     #loading previous logs
     if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log"):
         load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log"])
-        print("New optimizer is now aware of {} points.".format(len(bayes_optimizer.space)))
+        print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
+    else:
+        print(f"\n\n{os.getcwd()}\n\n")
 
     #training
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
@@ -164,7 +166,7 @@ if __name__ == '__main__':
     #saving results
     with open("./bayes_opt/train_logs/"+str(args.name)+"_results.txt", "w") as f:
         for i, res in enumerate(bayes_optimizer.res):
-            f.write(f"Iteration {i}: \n\t{res}")
+            f.write(f"\nIteration {i}: \n\t{res}")
 
         f.write(str(bayes_optimizer.max))
         f.close()
