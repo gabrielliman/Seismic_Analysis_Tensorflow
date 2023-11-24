@@ -103,6 +103,8 @@ if __name__ == '__main__':
        os.makedirs('./checkpoints/'+args.folder)
     
     #cleaning file
+    log_directory = "./bayes_opt/train_logs/"
+    os.makedirs(log_directory, exist_ok=True)  
     with open("./bayes_opt/train_logs/"+str(args.name)+"_test.txt", "w") as f:
         f.close()
 
