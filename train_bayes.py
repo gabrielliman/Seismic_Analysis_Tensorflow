@@ -159,7 +159,8 @@ if __name__ == '__main__':
     #     print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
     # else:
     #     print(f"\n\n{os.getcwd()}\n\n")
-
+    if os.path.exists(checkpoint_filepath):
+        os.remove(checkpoint_filepath)
 
     #saving logs of the optimization
     logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")
