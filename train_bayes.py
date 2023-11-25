@@ -52,7 +52,8 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
                             validation_data=(val_image, val_label))
     #nao posso pq nao sao compativeis entre os treinos    
     model.load_weights(checkpoint_filepath)
-    os.remove(checkpoint_filepath)
+    if os.path.exists(checkpoint_filepath):
+        os.remove(checkpoint_filepath)
     
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
