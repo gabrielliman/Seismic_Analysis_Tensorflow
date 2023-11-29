@@ -154,12 +154,14 @@ if __name__ == '__main__':
         random_state = 1)
 
 
-    # #loading previous logs
+    #loading previous logs
     # if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
     #     load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log.json"])
-    #     print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
-    # else:
-    #     print(f"\n\n{os.getcwd()}\n\n")
+    if os.path.exists("./bayes_opt/attention_bayes_10_20logs.log.json"):
+        load_logs(bayes_optimizer, logs=["./bayes_opt/attention_bayes_10_20logs.log.json"])
+        print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
+    else:
+        print(f"\n\n{os.getcwd()}\n\n")
     if os.path.exists(checkpoint_filepath):
         os.remove(checkpoint_filepath)
 
