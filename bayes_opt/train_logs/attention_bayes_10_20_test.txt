@@ -1,8 +1,52 @@
-Test with gamma = 2.000914998538759, learning_rate = 0.0015528833190894193, batch_size = 10.672769097245887, kernel_size = 4.232586873516862, filters = [16, 32, 64], dropout rate = 0.36016224672107905
-Test F1: 0.63309
-Test accuracy: 0.83475
+Test with gamma = 2.488256586694469, learning_rate = 0.00694361341346615, batch_size = 9.405859135996876, kernel_size = 4.698545154058887, filters = [16, 32, 64], dropout rate = 0.04190881803351465
+Test F1: 0.62665
+Test accuracy: 0.79567
 
-Test with gamma = 5.1741397938453595, learning_rate = 0.004250025692592619, batch_size = 6.9803496422541125, kernel_size = 5.2045367767537964, filters = [16, 32, 64, 128, 256], dropout rate = 0.17278036352152387
-Test F1: 0.73799
-Test accuracy: 0.87051
+Test with gamma = 4.973659594664419, learning_rate = 0.00010571286287740898, batch_size = 14.189806426519123, kernel_size = 5.67964683387485, filters = [16, 32, 64, 128, 256], dropout rate = 0.49929630906344963
+Test F1: 0.75552
+Test accuracy: 0.88497
+
+Test with gamma = 6.61677249809448, learning_rate = 0.0010977151733429524, batch_size = 15.235824416687837, kernel_size = 5.7665816891098975, filters = [16, 32, 64], dropout rate = 0.07978235043209742
+Test F1: 0.64795
+Test accuracy: 0.79202
+
+Test with gamma = 5.408360281207652, learning_rate = 0.006832473735818906, batch_size = 13.449654819322802, kernel_size = 3.6314822084959033, filters = [16, 32, 64, 128, 256], dropout rate = 0.2093634362786821
+Test F1: 0.70909
+Test accuracy: 0.84061
+
+Test with gamma = 2.272781205180422, learning_rate = 0.0024128317495887204, batch_size = 13.39811511712845, kernel_size = 6.171872285618733, filters = [16, 32, 64, 128], dropout rate = 0.13797366527878396
+Test F1: 0.6174
+Test accuracy: 0.82537
+
+Test with gamma = 7.45809288946066, learning_rate = 0.007698008396592084, batch_size = 10.490962054462148, kernel_size = 3.018887787188212, filters = [16, 32, 64], dropout rate = 0.33081980712008136
+Test F1: 0.62907
+Test accuracy: 0.76974
+
+Test with gamma = 9.4555788568693, learning_rate = 0.008341485780450282, batch_size = 18.139794935512242, kernel_size = 5.607129958646789, filters = [16, 32, 64, 128, 256], dropout rate = 0.1599976819913752
+Test F1: 0.71449
+Test accuracy: 0.85994
+
+Test with gamma = 4.356281875305544, learning_rate = 0.004677216771403947, batch_size = 18.98794965094789, kernel_size = 4.19911992723039, filters = [16, 32, 64, 128, 256], dropout rate = 0.41014250817964787
+Test F1: 0.68397
+Test accuracy: 0.85289
+
+Test with gamma = 7.743230841612358, learning_rate = 0.004405167568495663, batch_size = 8.621031113176368, kernel_size = 3.2002935980434337, filters = [16, 32, 64, 128], dropout rate = 0.0038785904368497937
+Test F1: 0.70011
+Test accuracy: 0.8309
+
+Test with gamma = 6.971144483097285, learning_rate = 0.000635264439097897, batch_size = 8.18824368020427, kernel_size = 7.098702629002746, filters = [16, 32, 64, 128], dropout rate = 0.27862129223158594
+Test F1: 0.72966
+Test accuracy: 0.85271
+
+Test with gamma = 5.402848505285273, learning_rate = 0.0035649303019065675, batch_size = 15.532943719793666, kernel_size = 5.644916088877078, filters = [16, 32, 64, 128, 256], dropout rate = 0.4667740271215986
+Test F1: 0.68927
+Test accuracy: 0.8389
+
+Test with gamma = 5.112711914653631, learning_rate = 0.002232212756093641, batch_size = 13.935687432923174, kernel_size = 5.0106520070116325, filters = [16, 32, 64, 128, 256], dropout rate = 0.4144747591142468
+Test F1: 0.72548
+Test accuracy: 0.85888
+
+Test with gamma = 5.105708450528976, learning_rate = 0.0001, batch_size = 13.668437703394734, kernel_size = 6.144294168660842, filters = [16, 32, 64, 128, 256, 512], dropout rate = 0.5
+Test F1: 0.71736
+Test accuracy: 0.86101
 
