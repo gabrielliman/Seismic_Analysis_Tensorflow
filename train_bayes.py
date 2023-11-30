@@ -151,7 +151,7 @@ if __name__ == '__main__':
         f            = fit_with_partial,
         pbounds      = bounds,
         verbose      = 1,  # verbose = 1 prints only when a maximum is observed, verbose = 0 is silent
-        random_state = 1)
+        allow_duplicate_points=True)
 
 
     #loading previous logs
