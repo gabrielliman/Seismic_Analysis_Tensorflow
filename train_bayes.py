@@ -50,10 +50,10 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
     history=model.fit(x=train_image, y=train_label, batch_size=int(batch_size), epochs=epochs,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))
-    #nao posso pq nao sao compativeis entre os treinos    
-    #model.load_weights(checkpoint_filepath)
+
+
     if os.path.exists(checkpoint_filepath):
-        os.remove(checkpoint_filepath)
+        model.load_weights(checkpoint_filepath)
     
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
@@ -63,6 +63,8 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
         f.write('\nTest F1: '+ str(round(macro_f1,5)))
         f.write('\nTest accuracy: ' + str(round(micro_f1,5)))
         f.write('\n\n')
+    if os.path.exists(checkpoint_filepath):
+        os.remove(checkpoint_filepath)
     return macro_f1
 
 
@@ -103,7 +105,7 @@ if __name__ == '__main__':
     # val_image=val_image[:100]
     # val_label=val_label[:100]
 
-    checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name
+    checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name+'.h5'
 
     if not os.path.exists('./checkpoints'):
         os.makedirs('./checkpoints')
@@ -157,13 +159,13 @@ if __name__ == '__main__':
     #loading previous logs
     if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
         load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log.json"])
-    # if os.path.exists("./bayes_opt/attention_bayes_10_20logs.log.json"):
-    #     load_logs(bayes_optimizer, logs=["./bayes_opt/attention_bayes_10_20logs.log.json"])
         print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
     else:
         print(f"\n\n{os.getcwd()}\n\n")
+
     if os.path.exists(checkpoint_filepath):
         os.remove(checkpoint_filepath)
+
 
     #saving logs of the optimization
     logger = JSONLogger(path="./bayes_opt/"+str(args.name)+"logs.log")

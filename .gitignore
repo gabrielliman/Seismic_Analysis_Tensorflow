@@ -8,3 +8,5 @@ checkpoints/*
 **/__pycache__/
 test.ipynb
 notes.txt
+*.pyc
+.vscode
