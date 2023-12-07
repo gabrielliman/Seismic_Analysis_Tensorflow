@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --output=SEISMIC/output_%j.txt 
-#SBATCH --error=SEISMIC/error_%j.txt 
+#SBATCH --output=slurm_seismic/output_%j.txt 
+#SBATCH --error=slurm_seismic/error_%j.txt 
 #SBATCH --job-name=seismic_bayesian_opt
 #SBATCH --time=96:00:00
 #SBATCH -w gorgona2 

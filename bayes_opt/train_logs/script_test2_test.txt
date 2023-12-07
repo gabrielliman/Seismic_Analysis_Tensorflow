@@ -1,0 +1,8 @@
+Test with gamma = 8.446685039675415, learning_rate = 0.00843816560409306, batch_size = 13.022752008181532, kernel_size = 4.782443441862713, filters = [16, 32, 64, 128], dropout rate = 0.06118005617028943
+Test F1: 0.0811
+Test accuracy: 0.29445
+
+Test with gamma = 7.668885233515969, learning_rate = 0.008421803231074346, batch_size = 4.529398940634149, kernel_size = 3.283695754549729, filters = [16, 32, 64], dropout rate = 0.40370428340150494
+Test F1: 0.42687
+Test accuracy: 0.61656
+
