@@ -57,7 +57,7 @@ if __name__ == '__main__':
   elif(args.model==1):
     model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
-      model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
   #NAO FUNCIONA
   # elif(args.model==3):
   #     model = BridgeNet_1()
@@ -114,7 +114,7 @@ if __name__ == '__main__':
   history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs,
                           callbacks=callbacks,
                           validation_data=(val_image, val_label))     
-#The best epoch is saved 
+  #The best epoch is saved 
   model.load_weights(checkpoint_filepath)
 
   if not os.path.exists('./results/'+args.folder):

@@ -10,3 +10,5 @@ test.ipynb
 notes.txt
 *.pyc
 .vscode
+utils/datapreparationlocal.py
+reference/*

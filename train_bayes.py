@@ -85,6 +85,7 @@ def get_args():
     parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
     parser.add_argument('--init_points', type=int, default=0, help="number of init points on bayes optimizer")
     parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
+    parser.add_argument('--last_iter', type=str, default="", help="name of the file with last point on bayes optimizer")
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -157,11 +158,15 @@ if __name__ == '__main__':
 
 
     #loading previous logs
-    if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
-        load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log.json"])
-        print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
+    if(args.last_iter==""):
+        if os.path.exists("./bayes_opt/"+str(args.name)+"logs.log.json"):
+            load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.name)+"logs.log.json"])
+            print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
     else:
-        print(f"\n\n{os.getcwd()}\n\n")
+        if os.path.exists("./bayes_opt/"+str(args.last_iter)+"logs.log.json"):
+            load_logs(bayes_optimizer, logs=["./bayes_opt/"+str(args.last_iter)+"logs.log.json"])
+            print("\n\n\nNew optimizer is now aware of {} points.\n\n\n".format(len(bayes_optimizer.space)))
+
 
     if os.path.exists(checkpoint_filepath):
         os.remove(checkpoint_filepath)
