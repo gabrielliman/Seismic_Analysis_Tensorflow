@@ -1,0 +1,15 @@
+
+Iteration 0: 
+	{'target': 0.3030545095853965, 'params': {'batch_size': 14.9859904330499, 'dropout_rate': 0.07718742941843387, 'gamma': 9.431904461565614, 'kernel_size': 3.7617562636281896, 'lr': 0.0007345555766652077, 'num_filters': 3.47105633767047}}
+Iteration 1: 
+	{'target': 0.43854948437016433, 'params': {'batch_size': 4.320296832778173, 'dropout_rate': 0.1919287589761438, 'gamma': 6.192839185021066, 'kernel_size': 4.325117800041259, 'lr': 0.0032912511719359362, 'num_filters': 3.0999556722849673}}
+Iteration 2: 
+	{'target': 0.09606048279206449, 'params': {'batch_size': 19.346201551745715, 'dropout_rate': 0.353709566800699, 'gamma': 7.705136234301722, 'kernel_size': 6.243914182353828, 'lr': 0.007780567164355649, 'num_filters': 5.012087541684124}}
+Iteration 3: 
+	{'target': 0.31770151248944883, 'params': {'batch_size': 10.48690704094306, 'dropout_rate': 0.05534892882352205, 'gamma': 3.2389437171153137, 'kernel_size': 6.905314702759465, 'lr': 0.0076330594200913334, 'num_filters': 4.62900760540875}}
+Iteration 4: 
+	{'target': 0.11051822478033235, 'params': {'batch_size': 16.25703581659711, 'dropout_rate': 0.31164009211393523, 'gamma': 2.357076469857901, 'kernel_size': 5.665053619634223, 'lr': 0.008290669335008844, 'num_filters': 3.552859772656194}}
+Iteration 5: 
+	{'target': 0.574473245062968, 'params': {'batch_size': 6.904907754404908, 'dropout_rate': 0.0, 'gamma': 10.0, 'kernel_size': 2.99, 'lr': 0.0001, 'num_filters': 6.1}}
+Iteration 6: 
+	{'target': 0.4861711383159684, 'params': {'batch_size': 4.0, 'dropout_rate': 0.5, 'gamma': 10.0, 'kernel_size': 7.1, 'lr': 0.0001, 'num_filters': 6.1}}{'target': 0.574473245062968, 'params': {'batch_size': 6.904907754404908, 'dropout_rate': 0.0, 'gamma': 10.0, 'kernel_size': 2.99, 'lr': 0.0001, 'num_filters': 6.1}}
