@@ -12,7 +12,7 @@ from utils.prediction import make_prediction
 # from models.bridgenet import BridgeNet_1
 import matplotlib.pyplot as plt
 from utils.datapreparation_aerialimagery import aerial_patches
-
+from utils.datapreparation_forest import forest_patches
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
@@ -33,6 +33,14 @@ def get_args():
     parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
     parser.add_argument('--weights_path', type=str, default="", help="path to checkpoints of weights you want to load")
     parser.add_argument('--dataset', type=int, default=0, help="which dataset will be used, 0=seismic, 1=aerial imagery")
+    parser.add_argument('--lr', type=float, default=1e-4, help="learning rate")
+    parser.add_argument('--dropout', type=float, default=0.5, help="dropout rate")
+    parser.add_argument('--kernel', '-k', type=int, default=3, help="kernel size")
+    parser.add_argument('--classes', type=int, default=6, help="number of classes")
+
+
+
+
 
     return parser.parse_args()
 
@@ -42,20 +50,22 @@ if __name__ == '__main__':
   args= get_args()
   slice_shape1=args.slice_shape1
   slice_shape2=args.slice_shape2
-  num_classes=6
-  stride1=16
+  num_classes=args.classes
+  stride1=100
   strideval2=100
   stridetest2=100
   if(args.dataset==0):
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
   elif(args.dataset==1):
-    train_image,train_label, test_image, test_label, val_image, val_label=aerial_patches("/home/gabriel/transfer_data/aerial_imagery/dataset", (slice_shape1,slice_shape2), (stride1,args.stridetrain),train=70, val=15, test=15)
-  train_image=train_image[:100]
-  train_label=train_label[:100]
-  test_image=test_image[:100]
-  test_label=test_label[:100]
-  val_image=val_image[:100]
-  val_label=val_label[:100]
+    train_image,train_label, test_image, test_label, val_image, val_label=aerial_patches("/home_cerberus/speed/nuneslima/transfer_data/aerial_imagery/Semantic segmentation dataset", (slice_shape1,slice_shape2), (stride1,args.stridetrain),train=70, val=15, test=15)
+  elif(args.dataset==2):
+    train_image,train_label, test_image, test_label, val_image, val_label=forest_patches("/home/gabriel/transfer_data/forest_aerial/Forest Segmented/Forest Segmented",train=70, val=15, test=15)
+  #train_image=train_image[:100]
+  #train_label=train_label[:100]
+  #test_image=test_image[:100]
+  #test_label=test_label[:100]
+  #val_image=val_image[:100]
+  #val_label=val_label[:100]
   
   
   #Definition of Models
@@ -64,7 +74,7 @@ if __name__ == '__main__':
   elif(args.model==1):
     model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
-    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128], classes=num_classes)
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
 
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name+'.h5'
 
@@ -111,9 +121,9 @@ if __name__ == '__main__':
     loss=SparseCategoricalFocalLoss(gamma=args.gamma, from_logits=True)
     loss_name="Sparce Categorical Focal Loss, Gamma: " + str(args.gamma)
 
-
-  model.load_weights(args.weights_path)
-  print("\n\n LOADED WEIGHTS \n\n")
+  if(args.weights_path!=""):
+    model.load_weights(args.weights_path)
+    print("\n\n LOADED WEIGHTS \n\n")
   
 
   #Model Compilation and Training
