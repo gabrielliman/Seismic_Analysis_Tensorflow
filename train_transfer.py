@@ -57,9 +57,9 @@ if __name__ == '__main__':
   slice_shape1=args.slice_shape1
   slice_shape2=args.slice_shape2
   num_classes=args.pre_classes
-  stride1=100
-  strideval2=192
-  stridetest2=192
+  stride1=256
+  strideval2=256
+  stridetest2=256
   if(args.dataset==0):
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
   elif(args.dataset==1):
@@ -70,8 +70,8 @@ if __name__ == '__main__':
     train_image,train_label, test_image, test_label, val_image, val_label=drone_patches("/scratch/nuneslima/drone",(slice_shape1,slice_shape2), (400,args.stridetrain),train=70, val=15, test=15)
   # train_image=train_image[:100]
   # train_label=train_label[:100]
-  test_image=test_image[:100]
-  test_label=test_label[:100]
+  #test_image=test_image[:100]
+  #test_label=test_label[:100]
   # val_image=val_image[:100]
   # val_label=val_label[:100]
   
