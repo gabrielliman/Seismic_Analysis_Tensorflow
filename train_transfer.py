@@ -82,7 +82,7 @@ if __name__ == '__main__':
   elif(args.model==1):
     model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
-    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
 
 
   if(args.weights_path!=""):
