@@ -28,5 +28,5 @@ Otimizador: Adam
 Função de Perda: Sparce Categorical Cross Entropy
 
 Stride Train: 100x64
-Stride Validation: 100x100
-Stride Test: 100x100
+Stride Validation: 100x64
+Stride Test: 100x64

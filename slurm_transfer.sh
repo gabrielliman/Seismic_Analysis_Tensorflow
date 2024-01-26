@@ -17,9 +17,9 @@ cd /home/grad/ccomp/21/nuneslima/Seismic-Analysis/Seismic_Analysis_Tensorflow
 #AERIAL IMAGERY
 
 #treinando primeiro
-conda run -n seismic_tf python ./train_transfer.py -m 2 --name "aerial_imagery" -o 0 -g 3.6 -s1 496 -s2 192 --stridetrain 64 --delta 1e-4 --patience 5 --loss_function 0 --folder "aerial_imagery_train" --epochs 100 --dataset 1 -b 4 -k 7
+conda run -n seismic_tf python ./train_transfer.py -m 2 --name "new_aerial_imagery" -o 0 -g 3.6 -s1 496 -s2 192 --stridetrain 64 --delta 1e-5 --patience 5 --loss_function 0 --folder "aerial_imagery_train" --epochs 100 --dataset 1 -b 16 -k 3 --dropout 0.5
 
-conda run -n seismic_tf python ./train_transfer.py -m 2 --name "transfer_aerial" -o 0 -g 3.6 -s1 992 -s2 192 --stridetrain 64 --delta 1e-4 --patience 5 --loss_function 0 --folder "transfer_results" --epochs 100 --dataset 0 -b 4 -k 7 --weights_path "./checkpoints/aerial_imagery_train/checkpoint_aerial_imagery.h5"
+conda run -n seismic_tf python ./train_transfer.py -m 2 --name "new_transfer_aerial" -o 0 -g 3.6 -s1 992 -s2 192 --stridetrain 64 --delta 1e-5 --patience 5 --loss_function 0 --folder "transfer_results" --epochs 100 --dataset 0 -b 16 -k 3 --weights_path "./checkpoints/aerial_imagery_train/checkpoint_aerial_imagery.h5" --dropout 0.5
 
 #NAO FUNCIONA PQ TEM NUMERO DE CLASSES DIFERENTE
 #FOREST IMAGERY
