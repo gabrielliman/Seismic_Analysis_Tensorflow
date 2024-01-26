@@ -91,8 +91,8 @@ def calculate_class_info(model, test_image, test_label, num_classes, predicted_l
 
     return accuracy_by_class, micro_f1_score
 
-def calculate_macro_f1_score(class_info):
-    class_f1 = [0,1,2,3,4,5]
+def calculate_macro_f1_score(class_info, num_classes=6):
+    class_f1 = list(range(0,num_classes))
     for class_idx in class_info:
         precision = class_info[class_idx][1]
         recall = class_info[class_idx][2]
@@ -106,11 +106,11 @@ def calculate_macro_f1_score(class_info):
 
     return macro_f1_score, class_f1
 
-def make_prediction(name,folder, model, test_image, test_label):
+def make_prediction(name,folder, model, test_image, test_label, num_classes=6):
 
     predicted_label = seisfacies_predict(model,test_image)
-    class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
-    macro_f1, class_f1=calculate_macro_f1_score(class_info)
+    class_info, micro_f1=calculate_class_info(model, test_image, test_label, num_classes, predicted_label)
+    macro_f1, class_f1=calculate_macro_f1_score(class_info, num_classes)
 
     data=[]
     for i in range(len(class_info)):

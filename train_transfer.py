@@ -80,19 +80,26 @@ if __name__ == '__main__':
   if(args.model==0):
     model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128], classes=num_classes)
   elif(args.model==1):
-    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
-  elif(args.model==2):
     model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
+  elif(args.model==2):
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
 
 
   if(args.weights_path!=""):
     model.load_weights(args.weights_path)
     print("\n\n LOADED WEIGHTS \n\n")
     new_model=Sequential()
-    new_model.add(model)
+
+    for layer in model.layers[:-1]:
+        new_model.add(layer)
+    # Add a new Dense layer with the specified number of classes
     new_model.add(Dense(args.classes, activation='softmax'))
-    new_model.layers[0].trainable = False
+    new_model.layers[-1].trainable = True  # You can set this to False if you want to freeze the last Dense layer
+    # new_model.add(model)
+    # new_model.add(Dense(args.classes, activation='softmax'))
+    # new_model.layers[0].trainable = False
     model= new_model
+    num_classes=args.classes
 
 
 
@@ -196,7 +203,7 @@ if __name__ == '__main__':
 # model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
 
   #Creation of Table with Test info and a summary of the Model
-  make_prediction(args.name,args.folder,model, test_image, test_label)
+  make_prediction(args.name,args.folder,model, test_image, test_label, num_classes=num_classes)
   f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
   model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
   f.write(model_info)
