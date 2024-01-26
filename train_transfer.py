@@ -64,12 +64,12 @@ if __name__ == '__main__':
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
   elif(args.dataset==1):
     train_image,train_label, test_image, test_label, val_image, val_label=aerial_patches("/scratch/nuneslima/aerial_imagery/dataset", (slice_shape1,slice_shape2), (stride1,args.stridetrain),train=70, val=15, test=15)
+    test_image=test_image[:200]
+    test_label=test_label[:200]
   elif(args.dataset==2):
     train_image,train_label, test_image, test_label, val_image, val_label=forest_patches("/scratch/nuneslima/forest/Forest Segmented/Forest Segmented",train=70, val=15, test=15)
   elif(args.dataset==3):
     train_image,train_label, test_image, test_label, val_image, val_label=drone_patches("/scratch/nuneslima/drone",(slice_shape1,slice_shape2), (400,args.stridetrain),train=70, val=15, test=15)
-    test_image=test_image[:200]
-    test_label=test_label[:200]
   # train_image=train_image[:100]
   # train_label=train_label[:100]
   # test_image=test_image[:100]
