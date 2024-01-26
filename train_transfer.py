@@ -14,6 +14,7 @@ from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
 from utils.datapreparation_aerialimagery import aerial_patches
 from utils.datapreparation_forest import forest_patches
+from utils.datapreparation_drone import drone_patches
 
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
@@ -65,6 +66,8 @@ if __name__ == '__main__':
     train_image,train_label, test_image, test_label, val_image, val_label=aerial_patches("/scratch/nuneslima/aerial_imagery/dataset", (slice_shape1,slice_shape2), (stride1,args.stridetrain),train=70, val=15, test=15)
   elif(args.dataset==2):
     train_image,train_label, test_image, test_label, val_image, val_label=forest_patches("/scratch/nuneslima/forest/Forest Segmented/Forest Segmented",train=70, val=15, test=15)
+  elif(args.dataset==3):
+    train_image,train_label, test_image, test_label, val_image, val_label=drone_patches("/scratch/nuneslima/aerial_drone",(slice_shape1,slice_shape2), (400,args.stridetrain),train=70, val=15, test=15)
   # train_image=train_image[:100]
   # train_label=train_label[:100]
   # test_image=test_image[:100]
@@ -79,7 +82,7 @@ if __name__ == '__main__':
   elif(args.model==1):
     model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
   elif(args.model==2):
-    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes, dropout_rate=args.dropout, kernel_size=args.kernel)
 
 
   if(args.weights_path!=""):
