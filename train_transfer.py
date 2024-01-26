@@ -64,7 +64,7 @@ if __name__ == '__main__':
   elif(args.dataset==1):
     train_image,train_label, test_image, test_label, val_image, val_label=aerial_patches("/scratch/nuneslima/aerial_imagery/dataset", (slice_shape1,slice_shape2), (stride1,args.stridetrain),train=70, val=15, test=15)
   elif(args.dataset==2):
-    train_image,train_label, test_image, test_label, val_image, val_label=forest_patches("/home/gabriel/transfer_data/forest_aerial/Forest Segmented/Forest Segmented",train=70, val=15, test=15)
+    train_image,train_label, test_image, test_label, val_image, val_label=forest_patches("/scratch/nuneslima/forest/Forest Segmented/Forest Segmented",train=70, val=15, test=15)
   # train_image=train_image[:100]
   # train_label=train_label[:100]
   # test_image=test_image[:100]
