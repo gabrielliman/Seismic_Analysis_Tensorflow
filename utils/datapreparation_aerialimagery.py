@@ -76,15 +76,18 @@ def extract_patches(images, patch_size, stride):
 def aerial_patches(folder_path, patch_shape, stride,train=70, val=15, test=15):
     images=[] 
     masks=[]
-    for i in range(1,9):
+    for i in range(4,9):
         img=load_images_from_tile(folder_path+"/Tile"+str(i))
         images=images+img
         msk=load_masks_from_tile(folder_path+"/Tile"+str(i))
         masks=masks+msk
     patches=extract_patches(images, patch_shape, stride)
     mask_patches=extract_patches(masks, patch_shape,stride)
-    tam=int(patches.shape[0]/8)
+    tam=int(patches.shape[0])
     train_lim=int(tam*train/100)
     val_lim=int(tam*(train+val)/100)
+    print(train_lim)
+    print(val_lim)
+    print(tam)
     #train, test, val
     return patches[:train_lim,:,:], mask_patches[:train_lim,:,:],patches[val_lim:tam,:,:], mask_patches[val_lim:tam,:,:],patches[train_lim:val_lim,:,:], mask_patches[train_lim:val_lim,:,:],
