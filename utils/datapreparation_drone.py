@@ -8,7 +8,7 @@ def load_images_from_tile(folder_path):
     folder_path=folder_path+"/dataset/semantic_drone_dataset/original_images"
     i=0
     for filename in sorted(os.listdir(folder_path)):
-        if(i>50):
+        if(i>150):
             break
         image_path = os.path.join(folder_path, filename)
         img = Image.open(image_path)
@@ -25,7 +25,7 @@ def load_masks_from_tile(folder_path):
     folder_path=folder_path+"/RGB_color_image_masks/RGB_color_image_masks"
     i=0
     for filename in sorted(os.listdir(folder_path)):
-        if(i>50):
+        if(i>150):
             break
         image_path = os.path.join(folder_path, filename)
         img = Image.open(image_path)
