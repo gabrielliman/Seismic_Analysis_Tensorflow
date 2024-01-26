@@ -90,14 +90,15 @@ if __name__ == '__main__':
     print("\n\n LOADED WEIGHTS \n\n")
     new_model=Sequential()
 
-    for layer in model.layers[:-1]:
-        new_model.add(layer)
-    # Add a new Dense layer with the specified number of classes
-    new_model.add(Dense(args.classes, activation='softmax'))
-    new_model.layers[-1].trainable = True  # You can set this to False if you want to freeze the last Dense layer
-    # new_model.add(model)
+    # for layer in model.layers[:-1]:
+    #     new_model.add(layer)
+    # # Add a new Dense layer with the specified number of classes
     # new_model.add(Dense(args.classes, activation='softmax'))
-    # new_model.layers[0].trainable = False
+    # new_model.layers[-1].trainable = True  # You can set this to False if you want to freeze the last Dense layer
+
+    new_model.add(model)
+    new_model.add(Dense(args.classes, activation='softmax'))
+    new_model.layers[0].trainable = False
     model= new_model
     num_classes=args.classes
 
