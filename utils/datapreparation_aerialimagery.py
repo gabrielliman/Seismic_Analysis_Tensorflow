@@ -83,7 +83,7 @@ def aerial_patches(folder_path, patch_shape, stride,train=70, val=15, test=15):
         masks=masks+msk
     patches=extract_patches(images, patch_shape, stride)
     mask_patches=extract_patches(masks, patch_shape,stride)
-    tam=int(patches.shape[0]/4)
+    tam=int(patches.shape[0]/8)
     train_lim=int(tam*train/100)
     val_lim=int(tam*(train+val)/100)
     #train, test, val
