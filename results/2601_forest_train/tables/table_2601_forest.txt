@@ -1,0 +1,24 @@
+╒══════════╤════════════╤═════════════╤══════════╤════════════╕
+│ Classe   │   Accuracy │   Precision │   Recall │   F1 score │
+╞══════════╪════════════╪═════════════╪══════════╪════════════╡
+│ Classe 0 │     0.5694 │      0.7471 │   0.7054 │     0.7256 │
+├──────────┼────────────┼─────────────┼──────────┼────────────┤
+│ Classe 1 │     0.7120 │      0.8174 │   0.8466 │     0.8317 │
+╘══════════╧════════════╧═════════════╧══════════╧════════════╛
+Macro F1 0.7786935166656884
+Micro F1 0.7914097871743094
+Test loss 0.041318897157907486
+Test acc 0.7914096713066101
+
+Model: attunet
+Slices: 256x256
+Epochs: 100
+Delta: 1e-05
+Patience: 5
+Batch size: 4
+Otimizador: Adam
+Função de Perda: Sparce Categorical Focal Loss, Gamma: 3.6
+
+Stride Train: 100x32
+Stride Validation: 100x100
+Stride Test: 100x100
