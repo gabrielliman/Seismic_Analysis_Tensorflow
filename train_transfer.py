@@ -57,9 +57,9 @@ if __name__ == '__main__':
   slice_shape1=args.slice_shape1
   slice_shape2=args.slice_shape2
   num_classes=args.pre_classes
-  stride1=256
-  strideval2=256
-  stridetest2=256
+  stride1=16
+  strideval2=100
+  stridetest2=100
   if(args.dataset==0):
     train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
   elif(args.dataset==1):
