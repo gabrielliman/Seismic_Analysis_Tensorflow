@@ -80,8 +80,8 @@ if __name__ == '__main__':
 
     #train_image=train_image[:100]
     #train_label=train_label[:100]
-    test_image=test_image[:200]
-    test_label=test_label[:200]
+    test_image=test_image[:1000]
+    test_label=test_label[:1000]
     #val_image=val_image[:100]
     #val_label=val_label[:100]
 
