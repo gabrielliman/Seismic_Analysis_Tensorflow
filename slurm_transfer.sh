@@ -3,7 +3,7 @@
 #SBATCH --output=slurm_seismic_transfer/output_%j.txt 
 #SBATCH --error=slurm_seismic_transfer/error_%j.txt 
 #SBATCH --job-name=seismic_transfer_learning
-#SBATCH --time=5:00:00
+#SBATCH --time=7:00:00
 #SBATCH -w gorgona2 
 #SBATCH --mail-user=gabrielliman2002@gmail.com
 #SBATCH --mail-type=ALL
