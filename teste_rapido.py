@@ -19,7 +19,7 @@ from utils.datapreparation_drone import drone_patches
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense
 
-#conda run -n seismic_tf python ./train_transfer.py -m 3 --name "0102_transfer_aerial_teste" -o 0 -g 3.6 -s1 992 -s2 192 --stridetrain 100 --delta 1e-5 --patience 10 --loss_function 1 --folder "0102_aerial_transfer_results_teste" --epochs 100 --dataset 4 -b 4 -k 3 --weights_path "./checkpoints/0102_aerial_transfer_results/checkpoint_0102_transfer_aerial.h5" --dropout 0.5 --pre_classes 6 --classes 6
+#conda run -n seismic_tf python ./teste_rapido.py -m 3 --name "0102_transfer_aerial_teste" -o 0 -g 3.6 -s1 992 -s2 192 --stridetrain 100 --delta 1e-5 --patience 10 --loss_function 1 --folder "0102_aerial_transfer_results_teste" --epochs 100 --dataset 4 -b 4 -k 3 --weights_path "./checkpoints/0102_aerial_transfer_results/checkpoint_0102_transfer_aerial.h5" --dropout 0.5 --pre_classes 6 --classes 6
 
 
 def get_args():
@@ -179,9 +179,9 @@ if __name__ == '__main__':
 #                           validation_data=(val_image, val_label))     
   
 
-  #The best epoch is saved 
-  model.load_weights(checkpoint_filepath)
-  model.save_weights(checkpoint_filepath)
+  # #The best epoch is saved 
+  # model.load_weights(checkpoint_filepath)
+  # model.save_weights(checkpoint_filepath)
 
   if not os.path.exists('./results/'+args.folder):
     os.makedirs('./results/'+args.folder)
