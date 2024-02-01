@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     new_model.add(model)
     new_model.add(Dense(args.classes, activation='softmax'))
-    new_model.layers[0].trainable = False
+    new_model.layers[0].trainable = True
     model= new_model
     num_classes=args.classes
 
