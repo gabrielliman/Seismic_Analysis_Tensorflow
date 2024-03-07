@@ -1,6 +1,17 @@
 import numpy as np
 import cv2
 
+
+def majority_vote(labels):
+    # Reshape the labels array to make it easier to work with
+    flattened_labels = labels.reshape(labels.shape[0], -1)
+
+    # Find the most frequent label along the second axis (axis=1)
+    most_frequent_labels = np.argmax(np.bincount(flattened_labels, axis=1), axis=1)
+
+    return most_frequent_labels
+
+
 def extract_patches(input_array, patch_shape, stride):
     """
     Extract patches from a 2D NumPy array.
@@ -24,6 +35,11 @@ def extract_patches(input_array, patch_shape, stride):
             patches.append(patch)
     
     return patches
+
+def linear_data(shape=(50,50),stridetest=(10,10), strideval=(10,10), stridetrain=(10,10)):
+    trainslices, trainlabels, testslices, testlabels, valslices, vallabels=my_division_data(shape,stridetest, strideval, stridetrain)
+    return trainslices, majority_vote(trainlabels), testslices, majority_vote(testlabels), valslices, majority_vote(vallabels)
+
 
 def my_division_data(shape=(992,576),stridetest=(230,14), strideval=(230,14), stridetrain=(8,8)):
     read_seis_data = np.load(
