@@ -44,12 +44,12 @@ if __name__ == '__main__':
     slice_shape2=args.slice_shape2
     num_classes=6
     train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(50,50))
-    train_image=train_image[:30000]
-    train_label=train_label[:30000]
-    test_image=test_image[:30000]
-    test_label=test_label[:30000]
-    val_image=val_image[:30000]
-    val_label=val_label[:30000]
+    train_image=train_image[:300]
+    train_label=train_label[:300]
+    test_image=test_image[:300]
+    test_label=test_label[:300]
+    val_image=val_image[:300]
+    val_label=val_label[:300]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
@@ -162,11 +162,11 @@ if __name__ == '__main__':
         axis[1].legend()
         plt.grid(False)
 
-
-
-
     fig.savefig("results/"+args.folder+"/graphs/graph_"+args.name+".png")
-    print("################################\n")
+
+    test_image = test_image.reshape(test_image.shape[0], slice_shape1,slice_shape2,1)  # Reshape to add the channel dimension
+
+    # Model evaluation
     print(model.evaluate(test_image, test_label))
 
     predicted_labels=model.predict(test_image)
