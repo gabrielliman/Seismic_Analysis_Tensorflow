@@ -33,7 +33,7 @@ if __name__ == '__main__':
     slice_shape1=args.slice_shape1
     slice_shape2=args.slice_shape2
     num_classes=6
-    train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2))
+    train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(50,50))
     print(train_image.shape)
     print(train_label.shape)
     print(type(train_label))
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     # test_label=test_label[:100]
     # val_image=val_image[:100]
     # val_label=val_label[:100]
-    model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2), num_classes=6)
+    model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
 
 

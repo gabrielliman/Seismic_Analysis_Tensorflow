@@ -39,7 +39,10 @@ def extract_patches(input_array, patch_shape, stride):
     
     return patches
 
-def linear_data(shape=(50,50),stridetest=(10,10), strideval=(10,10), stridetrain=(10,10)):
+def linear_data(shape=(50,50),stride=(10,10)):
+    stridetest=stride
+    strideval=stride
+    stridetrain=stride
     trainslices, trainlabels, testslices, testlabels, valslices, vallabels=my_division_data(shape,stridetest, strideval, stridetrain)
     return trainslices, majority_vote(trainlabels), testslices, majority_vote(testlabels), valslices, majority_vote(vallabels)
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers, models
 
-def simple_cnn(tam_entrada=(50,50), num_classes=6):
+def simple_cnn(tam_entrada=(50,50,1), num_classes=6):
     # Define the model
     model = models.Sequential()
 
