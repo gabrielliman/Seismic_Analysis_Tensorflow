@@ -47,12 +47,12 @@ if __name__ == '__main__':
     stride2=args.stride2
     num_classes=6
     train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(stride1,stride2))
-    train_image=train_image[:30000]
-    train_label=train_label[:30000]
-    test_image=test_image[:30000]
-    test_label=test_label[:30000]
-    val_image=val_image[:30000]
-    val_label=val_label[:30000]
+    train_image=train_image[:10000]
+    train_label=train_label[:10000]
+    test_image=test_image[:10000]
+    test_label=test_label[:10000]
+    val_image=val_image[:10000]
+    val_label=val_label[:10000]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
