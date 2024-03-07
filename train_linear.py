@@ -8,6 +8,13 @@ from sklearn.metrics import f1_score
 from utils.datapreparation import my_division_data, linear_data
 # from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+def data_generator(images, labels, batch_size):
+    generator = ImageDataGenerator()  # No rescaling or augmentation
+    generator.fit(images)  # This is necessary for the generator to work with flow method
+    generator = generator.flow(images, labels, batch_size=batch_size, shuffle=True)
+    return generator
 
 
 def get_args():
@@ -78,12 +85,12 @@ if __name__ == '__main__':
     if(args.optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=1e-4)
         opt_name="Adam"
-    elif(args.optimizer==1):
-        opt=tf.keras.optimizers.SGD()
-        opt_name="SGD"
-    elif(args.optimizer==2):
-        opt=tf.keras.optimizers.RMSprop()
-        opt_name="RMS"
+    # elif(args.optimizer==1):
+    #     opt=tf.keras.optimizers.SGD()
+    #     opt_name="SGD"
+    # elif(args.optimizer==2):
+    #     opt=tf.keras.optimizers.RMSprop()
+    #     opt_name="RMS"
 
     #Definition of Loss Function
     if(args.loss_function==0):
@@ -98,9 +105,19 @@ if __name__ == '__main__':
                         loss=loss,
                         metrics=['acc'])
 
-    history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs, steps_per_epoch=20000,
-                            callbacks=callbacks,
-                            validation_data=(val_image, val_label))     
+    batch_size = args.batch_size
+    train_data_generator = data_generator(train_image, train_label, batch_size)
+    val_data_generator = data_generator(val_image, val_label, batch_size)
+
+
+    steps_per_epoch = len(train_image) // batch_size
+    if(steps_per_epoch>20000): steps_per_epoch=20000
+    validation_steps = len(val_image) // batch_size
+
+
+
+    history = model.fit(train_data_generator, epochs=args.epochs, steps_per_epoch=steps_per_epoch,
+                    callbacks=callbacks, validation_data=val_data_generator, validation_steps=validation_steps) 
     
 
 

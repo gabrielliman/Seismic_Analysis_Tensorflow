@@ -1,7 +1,7 @@
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from tensorflow.keras import layers, models, regularizers
 
-def simple_cnn(tam_entrada=(50,50,1), num_classes=6):
+def simple_cnn(tam_entrada=(50,50,1), num_classes=6, dropout_rate=0.3):
     # Define the model
     model = models.Sequential()
 
@@ -18,9 +18,11 @@ def simple_cnn(tam_entrada=(50,50,1), num_classes=6):
     # Flatten the output before fully connected layers
     model.add(layers.Flatten())
 
-    # Fully connected layers
-    model.add(layers.Dense(2048, activation='relu'))
-    model.add(layers.Dense(2048, activation='relu'))
+    # Fully connected layers with dropout and weight decay
+    model.add(layers.Dense(2048, activation='relu', kernel_regularizer=regularizers.l2(1e-3)))
+    model.add(layers.Dropout(dropout_rate))
+    model.add(layers.Dense(2048, activation='relu', kernel_regularizer=regularizers.l2(1e-3)))
+    model.add(layers.Dropout(dropout_rate))
 
     # Output layer
     model.add(layers.Dense(num_classes, activation='linear'))  # Adjust number_of_classes accordingly
