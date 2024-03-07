@@ -5,7 +5,7 @@ import os
 from models.simplecnn import simple_cnn
 # from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data, linear_data
-from utils.prediction import make_prediction
+# from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
 
 
