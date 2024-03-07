@@ -170,14 +170,7 @@ if __name__ == '__main__':
     print(model.evaluate(test_image, test_label))
 
     predicted_labels=model.predict(test_image)
-    print("PREDICTED")
-    print(predicted_labels[0])
-    print(type(predicted_labels))
-    print(predicted_labels.shape)
-    print("TEST")
-    print(test_label[0])
-    print(type(test_label))
-    print(test_label.shape)
+    predicted_labels = np.argmax(predicted_labels, axis=1)
 
     f1 = f1_score(test_label, predicted_labels, average='weighted')  # Choose the appropriate average parameter
 
