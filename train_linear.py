@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
     parser.add_argument('--patience', '-p', dest='patience', metavar='P', type=int, default=10, help="Patience for callback function")
     parser.add_argument('--loss_function', '-l', dest='loss_function', metavar='L', type=int, default=0, help="Choose loss function, 0= Cross Entropy, 1= Focal Loss")
-    parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
+    parser.add_argument('--folder', '-f', type=str, default="linear_test", help='Name of the folder where the results will be saved')
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -44,12 +44,12 @@ if __name__ == '__main__':
     slice_shape2=args.slice_shape2
     num_classes=6
     train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(50,50))
-    train_image=train_image[:300]
-    train_label=train_label[:300]
-    test_image=test_image[:300]
-    test_label=test_label[:300]
-    val_image=val_image[:300]
-    val_label=val_label[:300]
+    train_image=train_image[:30000]
+    train_label=train_label[:30000]
+    test_image=test_image[:30000]
+    test_label=test_label[:30000]
+    val_image=val_image[:30000]
+    val_label=val_label[:30000]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
@@ -166,23 +166,20 @@ if __name__ == '__main__':
 
     test_image = test_image.reshape(test_image.shape[0], slice_shape1,slice_shape2,1)  # Reshape to add the channel dimension
 
-    # Model evaluation
-    print(model.evaluate(test_image, test_label))
-
     predicted_labels=model.predict(test_image)
     predicted_labels = np.argmax(predicted_labels, axis=1)
 
     f1 = f1_score(test_label, predicted_labels, average='weighted')  # Choose the appropriate average parameter
 
-    print(f'Weighted F1 Score: {f1:.4f}')
-
     # model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
 
     # #Creation of Table with Test info and a summary of the Model
     # make_prediction(args.name,args.folder,model, test_image, test_label)
-    # f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
-    # model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
-    # f.write(model_info)
-    # stride_info="\n\nStride Train: "+str(stride1)+"x"+str(args.stridetrain)+"\nStride Validation: "+str(stride1)+"x"+str(strideval2)+"\nStride Test: "+str(stride1)+"x"+str(stridetest2)
-    # f.write(stride_info)
-    # f.close()
+    f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
+    f.write(model.evaluate(test_image, test_label))
+    f.write(f'Weighted F1 Score: {f1:.4f}')
+    model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
+    f.write(model_info)
+    #stride_info="\n\nStride Train: "+str(stride1)+"x"+str(args.stridetrain)+"\nStride Validation: "+str(stride1)+"x"+str(strideval2)+"\nStride Test: "+str(stride1)+"x"+str(stridetest2)
+    #f.write(stride_info)
+    f.close()
