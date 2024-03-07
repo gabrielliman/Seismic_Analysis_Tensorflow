@@ -3,11 +3,14 @@ import cv2
 
 
 def majority_vote(labels):
-    # Reshape the labels array to make it easier to work with
     flattened_labels = labels.reshape(labels.shape[0], -1)
+    
+    # Initialize an array to store the most frequent labels
+    most_frequent_labels = np.zeros(flattened_labels.shape[0], dtype=int)
 
-    # Find the most frequent label along the second axis (axis=1)
-    most_frequent_labels = np.argmax(np.bincount(flattened_labels, axis=1), axis=1)
+    for i in range(flattened_labels.shape[0]):
+        unique_labels, counts = np.unique(flattened_labels[i], return_counts=True)
+        most_frequent_labels[i] = unique_labels[np.argmax(counts)]
 
     return most_frequent_labels
 

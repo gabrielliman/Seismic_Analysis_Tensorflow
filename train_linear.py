@@ -24,8 +24,6 @@ def get_args():
     parser.add_argument('--patience', '-p', dest='patience', metavar='P', type=int, default=10, help="Patience for callback function")
     parser.add_argument('--loss_function', '-l', dest='loss_function', metavar='L', type=int, default=0, help="Choose loss function, 0= Cross Entropy, 1= Focal Loss")
     parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
-    parser.add_argument('--init_points', type=int, default=0, help="number of init points on bayes optimizer")
-    parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -36,6 +34,9 @@ if __name__ == '__main__':
     slice_shape2=args.slice_shape2
     num_classes=6
     train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2))
+    print(train_image.shape)
+    print(train_label.shape)
+    print(type(train_label))
     # train_image=train_image[:100]
     # train_label=train_label[:100]
     # test_image=test_image[:100]
