@@ -44,12 +44,12 @@ if __name__ == '__main__':
     slice_shape2=args.slice_shape2
     num_classes=6
     train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(50,50))
-    train_image=train_image[:30000]
-    train_label=train_label[:30000]
-    test_image=test_image[:30000]
-    test_label=test_label[:30000]
-    val_image=val_image[:30000]
-    val_label=val_label[:30000]
+    train_image=train_image[:100]
+    train_label=train_label[:100]
+    test_image=test_image[:100]
+    test_label=test_label[:100]
+    val_image=val_image[:100]
+    val_label=val_label[:100]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
@@ -176,7 +176,7 @@ if __name__ == '__main__':
     # #Creation of Table with Test info and a summary of the Model
     # make_prediction(args.name,args.folder,model, test_image, test_label)
     f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
-    f.write(model.evaluate(test_image, test_label))
+    f.write(str(model.evaluate(test_image, test_label)))
     f.write(f'Weighted F1 Score: {f1:.4f}')
     model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
     f.write(model_info)
