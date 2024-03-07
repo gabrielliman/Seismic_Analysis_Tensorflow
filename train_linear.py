@@ -12,7 +12,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 def data_generator(images, labels, batch_size):
     generator = ImageDataGenerator()  # No rescaling or augmentation
-    generator.fit(images)  # This is necessary for the generator to work with flow method
     generator = generator.flow(images, labels, batch_size=batch_size, shuffle=True)
     return generator
 
