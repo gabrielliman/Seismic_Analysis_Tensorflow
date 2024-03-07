@@ -98,7 +98,7 @@ if __name__ == '__main__':
                         loss=loss,
                         metrics=['acc'])
 
-    history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs, steps_per_epoch=20000
+    history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs, steps_per_epoch=20000,
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))     
     
