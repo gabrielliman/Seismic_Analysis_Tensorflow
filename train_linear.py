@@ -148,6 +148,8 @@ if __name__ == '__main__':
 
 
     fig.savefig("results/"+args.folder+"/graphs/graph_"+args.name+".png")
+    print("################################\n")
+    print(model.evaluate(test_image, test_label))
 
     # model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
 
