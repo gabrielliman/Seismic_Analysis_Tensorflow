@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from models.simplecnn import simple_cnn
-from focal_loss import SparseCategoricalFocalLoss
+# from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data, linear_data
 from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
@@ -91,9 +91,9 @@ if __name__ == '__main__':
     if(args.loss_function==0):
         loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
         loss_name="Sparce Categorical Cross Entropy"
-    else:
-        loss=SparseCategoricalFocalLoss(gamma=args.gamma, from_logits=True)
-        loss_name="Sparce Categorical Focal Loss, Gamma: " + str(args.gamma)
+    # else:
+    #     loss=SparseCategoricalFocalLoss(gamma=args.gamma, from_logits=True)
+    #     loss_name="Sparce Categorical Focal Loss, Gamma: " + str(args.gamma)
 
     #Model Compilation and Training
     model.compile(optimizer=opt,
