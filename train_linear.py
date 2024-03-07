@@ -37,12 +37,12 @@ if __name__ == '__main__':
     print(train_image.shape)
     print(train_label.shape)
     print(type(train_label))
-    # train_image=train_image[:100]
-    # train_label=train_label[:100]
-    # test_image=test_image[:100]
-    # test_label=test_label[:100]
-    # val_image=val_image[:100]
-    # val_label=val_label[:100]
+    train_image=train_image[:100]
+    train_label=train_label[:100]
+    test_image=test_image[:100]
+    test_label=test_label[:100]
+    val_image=val_image[:100]
+    val_label=val_label[:100]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
