@@ -1,0 +1,10 @@
+[1.9097650051116943, 0.2759000062942505]Weighted F1 Score: 0.1193
+
+Model: sequential
+Slices: 50x50
+Epochs: 10
+Delta: 0.0001
+Patience: 30
+Batch size: 16
+Otimizador: Adam
+Função de Perda: Sparce Categorical Cross Entropy
