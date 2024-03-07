@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import os
 from models.simplecnn import simple_cnn
+from sklearn.metrics import f1_score
 # from focal_loss import SparseCategoricalFocalLoss
 from utils.datapreparation import my_division_data, linear_data
 # from utils.prediction import make_prediction
@@ -15,7 +16,7 @@ def get_args():
     parser.add_argument('--gamma', '-g', metavar='G', type=float, default=2, help="Gamma for Sparce Categorical Focal Loss, deve ser um float")
     parser.add_argument('--model', '-m', metavar='M', type=int, default=0, help="Choose Segmentation Model, 0: Unet, 1: Unet 3 Plus, 2: Attention UNet")
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=100, help='Limit of epochs')
-    parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=16, help='Batch size')
+    parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=256, help='Batch size')
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
     parser.add_argument('--stridetrain', type=int, default=32, help="Stride in second dimension for train images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=50, help='Shape 1 of the image slices')
@@ -97,7 +98,7 @@ if __name__ == '__main__':
                         loss=loss,
                         metrics=['acc'])
 
-    history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs,
+    history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs, steps_per_epoch=20000
                             callbacks=callbacks,
                             validation_data=(val_image, val_label))     
     
@@ -148,6 +149,11 @@ if __name__ == '__main__':
     fig.savefig("results/"+args.folder+"/graphs/graph_"+args.name+".png")
     print("################################\n")
     print(model.evaluate(test_image, test_label))
+
+    predicted_labels=model.predict(test_image)
+    f1 = f1_score(test_label, predicted_labels, average='weighted')  # Choose the appropriate average parameter
+
+    print(f'Weighted F1 Score: {f1:.4f}')
 
     # model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
 
