@@ -27,7 +27,8 @@ def get_args():
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=100, help='Limit of epochs')
     parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=256, help='Batch size')
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
-    parser.add_argument('--stridetrain', type=int, default=32, help="Stride in second dimension for train images")
+    parser.add_argument('--stride1', type=int, default=50, help="Stride in second dimension for train images")
+    parser.add_argument('--stride2', type=int, default=50, help="Stride in second dimension for train images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=50, help='Shape 1 of the image slices')
     parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=50, help='Shape 2 of the image slices')
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
@@ -42,14 +43,16 @@ if __name__ == '__main__':
     args= get_args()
     slice_shape1=args.slice_shape1
     slice_shape2=args.slice_shape2
+    stride1=args.stride1
+    stride2=args.stride2
     num_classes=6
-    train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(50,50))
-    train_image=train_image[:100]
-    train_label=train_label[:100]
-    test_image=test_image[:100]
-    test_label=test_label[:100]
-    val_image=val_image[:100]
-    val_label=val_label[:100]
+    train_image,train_label, test_image, test_label, val_image, val_label=linear_data(shape=(slice_shape1,slice_shape2), stride=(stride1,stride2))
+    train_image=train_image[:30000]
+    train_label=train_label[:30000]
+    test_image=test_image[:30000]
+    test_label=test_label[:30000]
+    val_image=val_image[:30000]
+    val_label=val_label[:30000]
     train_image = train_image.reshape(train_image.shape[0], slice_shape1, slice_shape2, 1)
     model= simple_cnn(tam_entrada=(slice_shape1, slice_shape2, 1), num_classes=6)
 
