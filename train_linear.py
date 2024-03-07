@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 def data_generator(images, labels, batch_size):
+    # Reshape the images to have an additional dimension
+    images = images.reshape(images.shape[0], images.shape[1], images.shape[2], 1)
+    
     generator = ImageDataGenerator()  # No rescaling or augmentation
     generator = generator.flow(images, labels, batch_size=batch_size, shuffle=True)
     return generator
