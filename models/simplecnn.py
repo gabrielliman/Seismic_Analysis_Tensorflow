@@ -28,10 +28,36 @@ def simple_cnn(tam_entrada=(50,50,1), num_classes=6, dropout_rate=0.3):
     model.add(layers.Dense(num_classes, activation='linear'))  # Adjust number_of_classes accordingly
     return model
 
-# # Compile the model
-# model.compile(optimizer='adam',
-#             loss='sparse_categorical_crossentropy',  # Use appropriate loss function
-#             metrics=['accuracy'])
 
-# # Display the model summary
-# model.summary()
+
+
+def simple_cnn_article2(tam_entrada, num_classes):
+    model = models.Sequential()
+    
+    # Convolutional layers
+    model.add(layers.Conv2D(64, (3, 3), activation='relu', padding='same', input_shape=tam_entrada))
+    model.add(layers.MaxPooling2D((2, 2)))
+
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same'))
+    model.add(layers.MaxPooling2D((2, 2)))
+    
+    # Flatten layer
+    model.add(layers.Flatten())
+    
+    # Dense layers
+    model.add(layers.Dense(1024, activation='relu'))
+    
+    # Output layer
+    model.add(layers.Dense(num_classes, activation='linear'))
+    
+    return model

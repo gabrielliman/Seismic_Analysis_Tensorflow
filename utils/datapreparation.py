@@ -2,18 +2,28 @@ import numpy as np
 import cv2
 
 
-def majority_vote(labels):
-    flattened_labels = labels.reshape(labels.shape[0], -1)
+# def majority_vote(labels):
+#     flattened_labels = labels.reshape(labels.shape[0], -1)
     
-    # Initialize an array to store the most frequent labels
-    most_frequent_labels = np.zeros(flattened_labels.shape[0], dtype=int)
+#     # Initialize an array to store the most frequent labels
+#     most_frequent_labels = np.zeros(flattened_labels.shape[0], dtype=int)
 
-    for i in range(flattened_labels.shape[0]):
-        unique_labels, counts = np.unique(flattened_labels[i], return_counts=True)
-        most_frequent_labels[i] = unique_labels[np.argmax(counts)]
+#     for i in range(flattened_labels.shape[0]):
+#         unique_labels, counts = np.unique(flattened_labels[i], return_counts=True)
+#         most_frequent_labels[i] = unique_labels[np.argmax(counts)]
 
-    return most_frequent_labels
+#     return most_frequent_labels
+def scale_to_256(array):
+    min_val = np.min(array)
+    max_val = np.max(array)
 
+    # Scale the array to the range [0, 255]
+    scaled_array = ((array - min_val) / (max_val - min_val)) * 255
+
+    # Round to integers
+    scaled_array = scaled_array.astype(np.uint8)
+
+    return scaled_array
 
 def extract_patches(input_array, patch_shape, stride):
     """
@@ -39,12 +49,41 @@ def extract_patches(input_array, patch_shape, stride):
     
     return patches
 
+
+def majority_class(images, masks, threshold_percentage=0.7):
+    n, a, b = masks.shape
+    majority_classes = []
+    majority_images=[]
+
+    for i in range(n):
+        sample = masks[i]
+        flattened_sample = sample.flatten()
+        unique_classes, counts = np.unique(flattened_sample, return_counts=True)
+        max_count = np.max(counts)
+        total_count = np.sum(counts)
+        if max_count / total_count >= threshold_percentage:
+            majority_class_index = np.argmax(counts)
+            majority_class = unique_classes[majority_class_index]
+            majority_classes.append(majority_class)
+            majority_images.append(images[i])
+
+
+    return np.array(majority_images), np.array(majority_classes)
+
+
+
 def linear_data(shape=(50,50),stride=(10,10)):
     stridetest=stride
     strideval=stride
     stridetrain=stride
     trainslices, trainlabels, testslices, testlabels, valslices, vallabels=my_division_data(shape,stridetest, strideval, stridetrain)
-    return trainslices, majority_vote(trainlabels), testslices, majority_vote(testlabels), valslices, majority_vote(vallabels)
+
+    patch_train,train_labels = majority_class(trainslices, trainlabels, 0.7)
+    patch_test,test_labels = majority_class(testslices, testlabels, 0.7)
+    patch_val,val_labels = majority_class(valslices, vallabels, 0.7)
+
+
+    return patch_train, train_labels, patch_test, test_labels, patch_val, val_labels
 
 
 def my_division_data(shape=(992,576),stridetest=(230,14), strideval=(230,14), stridetrain=(8,8)):
@@ -60,6 +99,7 @@ def my_division_data(shape=(992,576),stridetest=(230,14), strideval=(230,14), st
 
     # Inside the elements we pick what we are interesed in
     seis_data = read_seis_data['data']
+    seis_data=scale_to_256(seis_data)
     labels = read_labels['labels']
     labels[labels==6] = 0
 

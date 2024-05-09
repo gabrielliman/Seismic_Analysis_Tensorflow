@@ -1,0 +1,12 @@
+Loss: 4.116168975830078
+Acurácia: 0.2782000005245209
+Weighted F1 Score: 0.1219
+
+Model: sequential
+Slices: 50x50
+Epochs: 30
+Delta: 0.0001
+Patience: 30
+Batch size: 16
+Otimizador: Adam
+Função de Perda: Sparce Categorical Cross Entropy
