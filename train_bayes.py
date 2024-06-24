@@ -9,18 +9,19 @@ from utils.generaluse import closest_odd_number
 from utils.prediction import seisfacies_predict, calculate_class_info, calculate_macro_f1_score
 import matplotlib.pyplot as plt
 from functools import partial
+from utils.data_penobscot import penobscot_data_seg
 from bayes_opt import BayesianOptimization
 from bayes_opt.logger import JSONLogger
 from bayes_opt.event import Events
 from bayes_opt.util import load_logs
 
 
-def train_opt(name, callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernel_size, gamma, lr, batch_size, loss_function=1,optimizer=0):
+def train_opt(name,num_classes,slice_shape1,slice_shape2, callbacks,test_image,test_label,train_image, train_label, val_image, val_label,epochs,checkpoint_filepath,num_filters,dropout_rate, kernel_size, gamma, lr, batch_size, loss_function=1,optimizer=0):
 
     filters=[]
     for i in range(0,int(num_filters)):
        filters.append(2**(4+i))
-    model=Attention_unet(tam_entrada=(992,192,1),num_filtros=filters,classes=6, kernel_size=closest_odd_number(kernel_size), dropout_rate=dropout_rate)
+    model=Attention_unet(tam_entrada=(slice_shape1,slice_shape2,1),num_filtros=filters,classes=num_classes, kernel_size=closest_odd_number(kernel_size), dropout_rate=dropout_rate)
     #Definition of Optimizers
     if(optimizer==0):
         opt=tf.keras.optimizers.Adam(learning_rate=lr)
@@ -56,7 +57,7 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
         model.load_weights(checkpoint_filepath)
     
     predicted_label = seisfacies_predict(model,test_image)
-    class_info, micro_f1=calculate_class_info(model, test_image, test_label, 6, predicted_label)
+    class_info, micro_f1=calculate_class_info(model, test_image, test_label, num_classes, predicted_label)
     macro_f1, class_f1=calculate_macro_f1_score(class_info)
     with open("./bayes_opt/train_logs/"+str(name)+"_test.txt", "a") as f:
         f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernel_size}, filters = {filters}, dropout rate = {dropout_rate}")
@@ -71,12 +72,11 @@ def train_opt(name, callbacks,test_image,test_label,train_image, train_label, va
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
     parser.add_argument('--optimizer', '-o', metavar='O', type=int, default=0, help="Choose optimizer, 0: Adam, 1: SGD, 2: RMS")
-    parser.add_argument('--gamma', '-g', metavar='G', type=float, default=2, help="Gamma for Sparce Categorical Focal Loss, deve ser um float")
     parser.add_argument('--model', '-m', metavar='M', type=int, default=0, help="Choose Segmentation Model, 0: Unet, 1: Unet 3 Plus, 2: Attention UNet")
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=100, help='Limit of epochs')
-    parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=16, help='Batch size')
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
-    parser.add_argument('--stridetrain', type=int, default=32, help="Stride in second dimension for train images")
+    parser.add_argument('--stride1', type=int, default=32, help="Stride in first dimension for train images")
+    parser.add_argument('--stride2', type=int, default=32, help="Stride in second dimension for train images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=992, help='Shape 1 of the image slices')
     parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=576, help='Shape 2 of the image slices')
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
@@ -86,6 +86,8 @@ def get_args():
     parser.add_argument('--init_points', type=int, default=0, help="number of init points on bayes optimizer")
     parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
     parser.add_argument('--last_iter', type=str, default="", help="name of the file with last point on bayes optimizer")
+    parser.add_argument('--dataset', type=int, default=0, help="0: Parihaka 1: Penobscot 2: Netherlands F3")
+
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -95,16 +97,18 @@ if __name__ == '__main__':
     slice_shape1=args.slice_shape1
     slice_shape2=args.slice_shape2
     num_classes=6
-    stride1=16
+    stride1=args.stride1
+    stride2=args.stride2
     strideval2=100
     stridetest2=100
-    train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
-    # train_image=train_image[:100]
-    # train_label=train_label[:100]
-    # test_image=test_image[:100]
-    # test_label=test_label[:100]
-    # val_image=val_image[:100]
-    # val_label=val_label[:100]
+    if(args.dataset==0):
+      num_classes=6
+      train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stride1,stride2))
+    elif(args.dataset==1):
+      num_classes=8
+      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data_seg(patch_h=slice_shape1, patch_w=slice_shape2,stride_h=stride1, stride_w=stride2,train_ratio=0.7, test_ratio=0.2, val_ratio=0.1)
+    # train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
+
 
     checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name+'.h5'
 
@@ -134,13 +138,13 @@ if __name__ == '__main__':
         tf.keras.callbacks.ModelCheckpoint(
             filepath=checkpoint_filepath,
             save_weights_only=True,
-            monitor= 'val_unet3plus_output_sup2_activation_acc' if args.model == 1 else "val_acc",
+            monitor= 'val_unet3plus_output_sup2_activation_acc' if args.model == 3 else "val_acc",
             mode='max',
             save_best_only=True
         )
     ]
 
-    fit_with_partial = partial(train_opt,args.name,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
+    fit_with_partial = partial(train_opt,args.name,num_classes,slice_shape1,slice_shape2,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
     #bounds definition
     bounds = {
         'num_filters'  :(3, 6.1),

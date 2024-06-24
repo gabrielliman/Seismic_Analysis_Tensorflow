@@ -22,7 +22,8 @@ def get_args():
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=100, help='Limit of epochs')
     parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=16, help='Batch size')
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
-    parser.add_argument('--stridetrain', type=int, default=32, help="Stride in second dimension for train images")
+    parser.add_argument('--stride1', type=int, default=32, help="Stride in first dimension for train images")
+    parser.add_argument('--stride2', type=int, default=32, help="Stride in second dimension for train images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=992, help='Shape 1 of the image slices')
     parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=576, help='Shape 2 of the image slices')
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
@@ -39,20 +40,21 @@ if __name__ == '__main__':
   args= get_args()
   slice_shape1=args.slice_shape1
   slice_shape2=args.slice_shape2
-  stride1=16
-  stride2=args.stridetrain
+  stride1=args.stride1
+  stride2=args.stride2
   if(args.dataset==0):
       num_classes=6
       train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stride1,stride2))
   elif(args.dataset==1):
       num_classes=8
       train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data_seg(patch_h=slice_shape1, patch_w=slice_shape2,stride_h=stride1, stride_w=stride2,train_ratio=0.7, test_ratio=0.2, val_ratio=0.1)
-  # train_image=train_image[:100]
-  # train_label=train_label[:100]
-  # test_image=test_image[:100]
-  # test_label=test_label[:100]
-  # val_image=val_image[:100]
-  # val_label=val_label[:100]
+
+  # train_image=train_image[:1000]
+  # train_label=train_label[:1000]
+  # test_image=test_image[:1000]
+  # test_label=test_label[:1000]
+  # val_image=val_image[:1000]
+  # val_label=val_label[:1000]
   
   
   #Definition of Models
@@ -159,10 +161,10 @@ if __name__ == '__main__':
   model.save("/home/grad/ccomp/21/nuneslima/Seismic-Analysis/models/"+args.name+".keras")
 
   #Creation of Table with Test info and a summary of the Model
-  make_prediction(args.name,args.folder,model, test_image, test_label)
+  make_prediction(args.name,args.folder,model, test_image, test_label, num_classes)
   f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
   model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
   f.write(model_info)
-  stride_info="\n\nStride Train: "+str(stride1)+"x"+str(args.stridetrain)+"\nStride Validation: "+str(stride1)+"x"+str(stride2)+"\nStride Test: "+str(stride1)+"x"+str(stride2)
+  stride_info="\n\nStride Train: "+str(stride1)+"x"+str(stride2)+"\nStride Validation: "+str(stride1)+"x"+str(stride2)+"\nStride Test: "+str(stride1)+"x"+str(stride2)
   f.write(stride_info)
   f.close()
