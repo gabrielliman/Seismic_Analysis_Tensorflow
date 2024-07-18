@@ -79,7 +79,7 @@ elif args.gpuID == 1:
 ################################################################################
 
 
-module_name = '/scratch/nuneslima/data_parihaka_article'
+module_name = '/scratch/nunes/data_parihaka_article'
 module_data_dir = module_name
 module_model_dir = module_name
 if not os.path.exists(module_model_dir):

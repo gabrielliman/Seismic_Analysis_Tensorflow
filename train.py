@@ -7,23 +7,23 @@ from models.unet import Unet
 from models.unet3plus import Unet_3plus
 from models.newmodel import unetmodel
 from focal_loss import SparseCategoricalFocalLoss
-from utils.datapreparation import my_division_data
+from utils.datapreparation import my_division_data, article_division_data, penobscot_data
 from utils.prediction import make_prediction
-from utils.data_penobscot import penobscot_data_seg
-# from models.bridgenet import BridgeNet_1
 import matplotlib.pyplot as plt
 
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
     parser.add_argument('--optimizer', '-o', metavar='O', type=int, default=0, help="Choose optimizer, 0: Adam, 1: SGD, 2: RMS")
-    parser.add_argument('--gamma', '-g', metavar='G', type=float, default=2, help="Gamma for Sparce Categorical Focal Loss, deve ser um float")
-    parser.add_argument('--model', '-m', metavar='M', type=int, default=0, help="Choose Segmentation Model, 0: Unet, 1: Unet 3 Plus, 2: Attention UNet")
+    parser.add_argument('--gamma', '-g', metavar='G', type=float, default=3.6, help="Gamma for Sparce Categorical Focal Loss, deve ser um float")
+    parser.add_argument('--model', '-m', metavar='M', type=int, default=2, help="Choose Segmentation Model, 0: Unet, 1: Unet 3 Plus, 2: Attention UNet")
     parser.add_argument('--epochs', '-e', metavar='E', type=int, default=100, help='Limit of epochs')
     parser.add_argument('--batch_size', '-b', dest='batch_size', metavar='B', type=int, default=16, help='Batch size')
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
     parser.add_argument('--stride1', type=int, default=32, help="Stride in first dimension for train images")
     parser.add_argument('--stride2', type=int, default=32, help="Stride in second dimension for train images")
+    parser.add_argument('--stridetest1', type=int, default=32, help="Stride in first dimension for test images")
+    parser.add_argument('--stridetest2', type=int, default=32, help="Stride in second dimension for test images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=992, help='Shape 1 of the image slices')
     parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=576, help='Shape 2 of the image slices')
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
@@ -31,6 +31,10 @@ def get_args():
     parser.add_argument('--loss_function', '-l', dest='loss_function', metavar='L', type=int, default=0, help="Choose loss function, 0= Cross Entropy, 1= Focal Loss")
     parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
     parser.add_argument('--dataset', type=int, default=0, help="0: Parihaka 1: Penobscot 2: Netherlands F3")
+    parser.add_argument('--kernel', type=int, default=7, help="kernel size")
+    parser.add_argument('--gpuID', type=int, default=1, help="gpu id")
+    parser.add_argument('--filters', type=int, default=6, help="num_filters")
+    parser.add_argument('--dropout', type=float, default=0, help="Delta for call back function")
 
     return parser.parse_args()
 
@@ -42,31 +46,43 @@ if __name__ == '__main__':
   slice_shape2=args.slice_shape2
   stride1=args.stride1
   stride2=args.stride2
+  stridetest1=args.stridetest1
+  stridetest2=args.stridetest2
   if(args.dataset==0):
       num_classes=6
-      train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stride1,stride2))
+      train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
   elif(args.dataset==1):
       num_classes=8
-      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data_seg(patch_h=slice_shape1, patch_w=slice_shape2,stride_h=stride1, stride_w=stride2,train_ratio=0.7, test_ratio=0.2, val_ratio=0.1)
+      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
+  elif(args.dataset==2):
+      num_classes=6
+      train_image,train_label, test_image, test_label, val_image, val_label=article_division_data(shape=(slice_shape1,slice_shape2), strideval=(230,14), stridetrain=(stride1,stride2))
 
-  # train_image=train_image[:1000]
-  # train_label=train_label[:1000]
-  # test_image=test_image[:1000]
-  # test_label=test_label[:1000]
-  # val_image=val_image[:1000]
-  # val_label=val_label[:1000]
   
-  
+
+
+  if args.gpuID == -1:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+      print('CPU is used.')
+  elif args.gpuID == 0:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+      print('GPU device ' + str(args.gpuID) + ' is used.')
+  elif args.gpuID == 1:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+      print('GPU device ' + str(args.gpuID) + ' is used.')
+
+  filters=[]
+  for i in range(0,int(args.filters)):
+      filters.append(2**(4+i))
+
+
   #Definition of Models
   if(args.model==0):
-    model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
+    model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=filters, classes=num_classes)
   elif(args.model==1):
-    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=[16, 32, 64, 128, 256], classes=num_classes)
+    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=filters, classes=num_classes)
   elif(args.model==2):
-    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=[16, 32, 64, 128, 256, 512], classes=num_classes)
-  #NAO FUNCIONA
-  # elif(args.model==3):
-  #     model = BridgeNet_1()
+    model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=filters, classes=num_classes,kernel_size=args.kernel,dropout_rate=args.dropout)
 
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name +'.weights.h5'
 
@@ -114,7 +130,7 @@ if __name__ == '__main__':
 
   #Model Compilation and Training
   model.compile(optimizer=opt,
-                      loss=loss,
+                    loss=loss,
                     metrics=['acc'])
 
   history = model.fit(train_image, train_label, batch_size=args.batch_size, epochs=args.epochs,
@@ -157,14 +173,13 @@ if __name__ == '__main__':
     plt.grid(False)
   fig.savefig("results/"+args.folder+"/graphs/graph_"+args.name+".png")
 
-  #model.save("/scratch/nuneslima/models/tensorflow/"+args.name+".h5")
-  model.save("/home/grad/ccomp/21/nuneslima/Seismic-Analysis/models/"+args.name+".keras")
+  model.save("/scratch/nunes/seismic_models/"+args.folder+"_"+args.name+".keras")
 
   #Creation of Table with Test info and a summary of the Model
   make_prediction(args.name,args.folder,model, test_image, test_label, num_classes)
   f = open("results/"+args.folder+"/tables/table_"+args.name+".txt", "a")
   model_info="\n\nModel: "+str(model.name)+"\nSlices: "+ str(slice_shape1)+"x"+str(slice_shape2)+"\nEpochs: "+str(args.epochs) + "\nDelta: "+ str(args.delta) + "\nPatience: " + str(args.patience)+ "\nBatch size: " + str(args.batch_size) + "\nOtimizador: " +str(opt_name) + "\nFunção de Perda: "+ str(loss_name)
   f.write(model_info)
-  stride_info="\n\nStride Train: "+str(stride1)+"x"+str(stride2)+"\nStride Validation: "+str(stride1)+"x"+str(stride2)+"\nStride Test: "+str(stride1)+"x"+str(stride2)
+  stride_info="\n\nStride Train: "+str(stride1)+"x"+str(stride2)+"\nStride Validation: "+str(stride1)+"x"+str(stride2)+"\nStride Test: "+str(stridetest1)+"x"+str(stridetest2)
   f.write(stride_info)
   f.close()

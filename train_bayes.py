@@ -4,12 +4,11 @@ import numpy as np
 import os
 from models.attention import Attention_unet
 from focal_loss import SparseCategoricalFocalLoss
-from utils.datapreparation import my_division_data
+from utils.datapreparation import my_division_data, penobscot_data
 from utils.generaluse import closest_odd_number
 from utils.prediction import seisfacies_predict, calculate_class_info, calculate_macro_f1_score
 import matplotlib.pyplot as plt
 from functools import partial
-from utils.data_penobscot import penobscot_data_seg
 from bayes_opt import BayesianOptimization
 from bayes_opt.logger import JSONLogger
 from bayes_opt.event import Events
@@ -58,7 +57,7 @@ def train_opt(name,num_classes,slice_shape1,slice_shape2, callbacks,test_image,t
     
     predicted_label = seisfacies_predict(model,test_image)
     class_info, micro_f1=calculate_class_info(model, test_image, test_label, num_classes, predicted_label)
-    macro_f1, class_f1=calculate_macro_f1_score(class_info)
+    macro_f1, class_f1=calculate_macro_f1_score(class_info, num_classes)
     with open("./bayes_opt/train_logs/"+str(name)+"_test.txt", "a") as f:
         f.write(f"Test with gamma = {gamma}, learning_rate = {lr}, batch_size = {batch_size}, kernel_size = {kernel_size}, filters = {filters}, dropout rate = {dropout_rate}")
         f.write('\nTest F1: '+ str(round(macro_f1,5)))
@@ -77,6 +76,8 @@ def get_args():
     parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
     parser.add_argument('--stride1', type=int, default=32, help="Stride in first dimension for train images")
     parser.add_argument('--stride2', type=int, default=32, help="Stride in second dimension for train images")
+    parser.add_argument('--stridetest1', type=int, default=32, help="Stride in first dimension for test images")
+    parser.add_argument('--stridetest2', type=int, default=32, help="Stride in second dimension for test images")
     parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=992, help='Shape 1 of the image slices')
     parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=576, help='Shape 2 of the image slices')
     parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
@@ -87,6 +88,7 @@ def get_args():
     parser.add_argument('--num_iter', type=int, default=0, help="number of iterations on bayes optimizer")
     parser.add_argument('--last_iter', type=str, default="", help="name of the file with last point on bayes optimizer")
     parser.add_argument('--dataset', type=int, default=0, help="0: Parihaka 1: Penobscot 2: Netherlands F3")
+    parser.add_argument('--gpuID', type=int, default=1, help="gpu id")
 
     return parser.parse_args()
 
@@ -99,15 +101,26 @@ if __name__ == '__main__':
     num_classes=6
     stride1=args.stride1
     stride2=args.stride2
-    strideval2=100
-    stridetest2=100
+    stridetest1=args.stridetest1
+    stridetest2=args.stridetest2
     if(args.dataset==0):
       num_classes=6
-      train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stride1,stride2))
+      train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
     elif(args.dataset==1):
       num_classes=8
-      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data_seg(patch_h=slice_shape1, patch_w=slice_shape2,stride_h=stride1, stride_w=stride2,train_ratio=0.7, test_ratio=0.2, val_ratio=0.1)
-    # train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,args.stridetrain), strideval=(stride1,strideval2), stridetest=(stride1,stridetest2))
+      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
+
+
+    if args.gpuID == -1:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+      print('CPU is used.')
+    elif args.gpuID == 0:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+      print('GPU device ' + str(args.gpuID) + ' is used.')
+    elif args.gpuID == 1:
+      os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+      print('GPU device ' + str(args.gpuID) + ' is used.')
+
 
 
     checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name+'.h5'
@@ -151,7 +164,7 @@ if __name__ == '__main__':
         'gamma'        :(2, 10),
         'lr'           :(1e-4, 1e-2),
         'batch_size'   :(4, 20.001),
-        'kernel_size'  :(2.99, 7.1),
+        'kernel_size'  :(2.99, 12.0),
         'dropout_rate' :(0.0,0.5)}
     
     bayes_optimizer = BayesianOptimization(
@@ -185,9 +198,10 @@ if __name__ == '__main__':
     bayes_optimizer.maximize(init_points = args.init_points, n_iter = args.num_iter,)
 
     #saving results
-    with open("./bayes_opt/train_logs/"+str(args.name)+"_results.txt", "w") as f:
+    with open("./bayes_opt/train_logs/"+str(args.name)+"_results.txt", "a") as f:
+        f.write("\n")
         for i, res in enumerate(bayes_optimizer.res):
-            f.write(f"\nIteration {i}: \n\t{res}")
+            f.write(f"Iteration {i}: \n\t{res}")
 
         f.write(str(bayes_optimizer.max))
         f.close()

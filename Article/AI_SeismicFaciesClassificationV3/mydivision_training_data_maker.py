@@ -14,7 +14,7 @@ np.random.seed(seed=0)  # for reproducibility随机数可重复，类似MATLAB�
 random.seed(0)
 plot_show = True
 patch_rows = 992
-patch_cols = 576
+patch_cols = 192
 left_for_test_iline = 7
 
 # 数据存到哪个硬盘？这里存到了D盘某个文件夹，像这么多样本，不建议存在当前文件夹
@@ -28,7 +28,7 @@ left_for_test_iline = 7
 left_for_test_xline = 45
 stride_common = 8
 #stride = [stride_common, stride_common]
-stride= [15,5]
+stride= [32,32]
 data_save = 1
 Y_channels = 1
 ################################################################################
@@ -38,7 +38,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # 做数据只使用CPU即可，用�
 print('CPU is used.')
 
 ################################################################################
-module_data_dir = '/scratch/nunes/data_parihaka_article'
+module_data_dir = '/scratch/nunes/data_parihaka_article_mydivision'
 if not os.path.exists(module_data_dir):
     os.mkdir(module_data_dir)
 
@@ -79,8 +79,8 @@ if __name__ == '__main__':
         Y = Y.transpose((2, 1, 0)).astype('float32')
         print('X.shape:' + str(X.shape))
         print('Y.shape:' + str(Y.shape))
-        X = X[:, left_for_test_xline:-left_for_test_xline, left_for_test_iline:-left_for_test_iline]
-        Y = Y[:, left_for_test_xline:-left_for_test_xline, left_for_test_iline:-left_for_test_iline]
+        X = X[:,:622,:430]
+        Y = Y[:,:622,:430]
         print(f'{100 * Y.shape[1] * Y.shape[2] / (782 * 590)}')
         print(f'{100 * Y.shape[1] * Y.shape[2] / (1116 * 841)}')
         print('X.shape:' + str(X.shape))

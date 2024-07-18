@@ -126,7 +126,7 @@ def make_prediction(name,folder, model, test_image, test_label, num_classes=6):
   
     #define header names
     col_names = ["Classe","Accuracy", "Precision", 'Recall', 'F1 score']
-    f = open("results/"+folder+"/tables/table_"+name+".txt", "w")
+    f = open("./results/"+folder+"/tables/table_"+name+".txt", "w")
     f.write(tabulate(data, headers=col_names, tablefmt="fancy_grid",floatfmt=".4f"))
     texto="\nMacro F1 "+ str(macro_f1) + "\nMicro F1 " + str(micro_f1)
     f.write(texto)

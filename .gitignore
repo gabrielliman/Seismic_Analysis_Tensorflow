@@ -1,7 +1,8 @@
 pycache
 unused
 # tmp
-# results/*
+#results/*
+obsoleto/*
 # results_nocheckpoint
 checkpoints/*
 # *.sh
@@ -13,3 +14,4 @@ notes.txt
 utils/datapreparationlocal.py
 reference/*
 SeismicData/*
+results/*

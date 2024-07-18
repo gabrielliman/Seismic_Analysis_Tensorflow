@@ -3,7 +3,7 @@ from keras.layers import *
 
 
 # Taihui Yang
-def FlexibleBridgeNet(up_down_times=4, nD=2, X_channels=1, Y_channels=1, kernel_size=3, pool_size_all=2, use_BN=0, kernels_all=None, act_hide=1, act_last='softmax',
+def FlexibleBridgeNet(input_size=(992,576,1),up_down_times=4, nD=2, X_channels=1, Y_channels=1, kernel_size=3, pool_size_all=2, use_BN=0, kernels_all=None, act_hide=1, act_last='softmax',
                       pool_way='max', drop_rate=0, conv2act_repeat=2, dilation_rate=1, final_minus=0, res_case=0, res_number=1):
     # 不使用残差模块
     def conv_block0(filters):
@@ -157,7 +157,8 @@ def FlexibleBridgeNet(up_down_times=4, nD=2, X_channels=1, Y_channels=1, kernel_
     f_act_hide = act_hide_dict[act_hide] if act_hide in list(range(1, 6)) else None
     ##########################################################################################
     cat_layer_list = []
-    output_layer = input_layer = Input(shape=tuple([None for _ in range(nD)]) + tuple([X_channels]))
+    #output_layer = input_layer = Input(shape=tuple([None for _ in range(nD)]) + tuple([X_channels]))
+    output_layer = input_layer = Input(input_size)
 
     for k in kernels_all[:-1]:
         cat_layer, output_layer = down_block(k)(output_layer)
