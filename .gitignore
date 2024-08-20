@@ -14,6 +14,7 @@ notes.txt
 utils/datapreparationlocal.py
 reference/*
 SeismicData/*
-results/*
-scripts/*
+#results/*
+#scripts/*
+#*.sh
 environment.yml

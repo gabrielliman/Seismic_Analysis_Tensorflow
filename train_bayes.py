@@ -160,12 +160,12 @@ if __name__ == '__main__':
     fit_with_partial = partial(train_opt,args.name,num_classes,slice_shape1,slice_shape2,callbacks,test_image,test_label,train_image, train_label, val_image, val_label, args.epochs,checkpoint_filepath)
     #bounds definition
     bounds = {
-        'num_filters'  :(3, 6.1),
+        'num_filters'  :(3, 6.4),
         'gamma'        :(2, 10),
         'lr'           :(1e-4, 1e-2),
         'batch_size'   :(4, 20.001),
         'kernel_size'  :(2.99, 12.0),
-        'dropout_rate' :(0.0,0.5)}
+        'dropout_rate' :(0.0,0.7)}
     
     bayes_optimizer = BayesianOptimization(
         f            = fit_with_partial,
