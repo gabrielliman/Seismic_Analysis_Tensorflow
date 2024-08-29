@@ -105,6 +105,105 @@ def my_division_data(shape=(992,192),stridetest=(128,64), strideval=(128,64), st
     return trainslices, trainlabels, testslices, testlabels, valslices, vallabels
 
 
+def limited_training_data(shape=(992,192),stridetest=(128,64), strideval=(128,64), stridetrain=(128,64), sizetrain_x=192, sizetrain_y=192, test_pos='end'):
+    read_seis_data = np.load(
+        '/scratch/nunes/seismic/data_train.npz', 
+                allow_pickle=True, mmap_mode = 'r')
+    # We read our labels
+    read_labels = np.load(
+        '/scratch/nunes/seismic/labels_train.npz',
+                    allow_pickle=True, mmap_mode = 'r')
+
+    # Inside the elements we pick what we are interesed in
+    seis_data = read_seis_data['data']
+    seis_data=scale_to_256(seis_data)
+    labels = read_labels['labels']
+    labels[labels==6] = 0
+
+    inicio_area_livre_x=sizetrain_x+80
+    fim_area_livre_x=seis_data.shape[1]
+    meio_area_livre_x=int((fim_area_livre_x-inicio_area_livre_x)/2 + inicio_area_livre_x)
+    #ex:192+80=272
+    inicio_area_livre_y=sizetrain_y+80
+    fim_area_livre_y=seis_data.shape[2]
+    meio_area_livre_y=int((fim_area_livre_y-inicio_area_livre_y)/2 + inicio_area_livre_y)
+
+
+
+    if(test_pos=='end'):
+        test_start_x=fim_area_livre_x-80
+        test_end_x=fim_area_livre_x
+        test_start_y=fim_area_livre_y-80
+        test_end_y=fim_area_livre_y
+    if(test_pos=='start'):
+        test_start_x=inicio_area_livre_x
+        test_end_x=inicio_area_livre_x+80
+        test_start_y=inicio_area_livre_y
+        test_end_y=inicio_area_livre_y+80
+    if(test_pos=='mid'):
+        test_start_x=meio_area_livre_x-40
+        test_end_x=meio_area_livre_x+40
+        test_start_y=meio_area_livre_y-40
+        test_end_y=meio_area_livre_y+40
+        print(test_start_x,test_end_x)
+        print(test_start_y,test_end_y)
+
+    testcrossline=seis_data[:,test_start_x:test_end_x,:]
+    testinline=seis_data[:,:,test_start_y:test_end_y]
+    testcrossline_label=labels[:,test_start_x:test_end_x,:]
+    testinline_label=labels[:,:,test_start_y:test_end_y]
+
+
+    #removing the test data the rest of our data has shape Z=1006 X=702 Y=510
+    valcrossline=seis_data[:,sizetrain_x:sizetrain_x+80,:sizetrain_y+80]
+    valinline=seis_data[:,:sizetrain_x+80,sizetrain_y:sizetrain_y+80]
+    valcrossline_label=labels[:,sizetrain_x:sizetrain_x+80,:sizetrain_y+80]
+    valinline_label=labels[:,:sizetrain_x+80,sizetrain_y:sizetrain_y+80]
+
+
+    ##removing the validation data the rest of our data has shape Z=1006 X=622 Y=430
+    traindata=seis_data[:,:sizetrain_x,:sizetrain_y]
+    trainlabel=labels[:,:sizetrain_x,:sizetrain_y]
+
+
+    #TRAINING
+    trainpatches=[]
+    trainlabels=[]
+    for i in (range(traindata.shape[2])):
+        trainpatches=trainpatches+extract_patches(traindata[:,:,i],(shape),(stridetrain))
+        trainlabels=trainlabels+extract_patches(trainlabel[:,:,i],(shape),(stridetrain))
+    for i in (range(traindata.shape[1])):
+        trainpatches=trainpatches+extract_patches(traindata[:,i,:],(shape),(stridetrain))
+        trainlabels=trainlabels+extract_patches(trainlabel[:,i,:],(shape),(stridetrain))
+    trainslices=np.array(trainpatches)
+    trainlabels=np.array(trainlabels)
+
+    #VALIDATION
+    valpatches=[]
+    vallabels=[]
+    for i in (range(valinline.shape[2])):
+        valpatches=valpatches+extract_patches(valinline[:,:,i],(shape),(strideval))
+        vallabels=vallabels+extract_patches(valinline_label[:,:,i],(shape),(strideval))
+    for i in (range(valcrossline.shape[1])):
+        valpatches=valpatches+extract_patches(valcrossline[:,i,:],(shape),(strideval))
+        vallabels=vallabels+extract_patches(valcrossline_label[:,i,:],(shape),(strideval))
+    valslices=np.array(valpatches)
+    vallabels=np.array(vallabels)
+
+    #TEST
+    testpatches=[]
+    testlabels=[]
+    for i in (range(testinline.shape[2])):
+        testpatches=testpatches+extract_patches(testinline[:,:,i],(shape),(stridetest))
+        testlabels=testlabels+extract_patches(testinline_label[:,:,i],(shape),(stridetest))
+    for i in (range(testcrossline.shape[1])):
+        testpatches=testpatches+extract_patches(testcrossline[:,i,:],(shape),(stridetest))
+        testlabels=testlabels+extract_patches(testcrossline_label[:,i,:],(shape),(stridetest))
+    testslices=np.array(testpatches)
+    testlabels=np.array(testlabels)
+
+    return trainslices, trainlabels, testslices, testlabels, valslices, vallabels
+
 
 
 def article_division_data(shape=(992,192),stridetest=(128,64), strideval=(128,64), stridetrain=(128,64)):
