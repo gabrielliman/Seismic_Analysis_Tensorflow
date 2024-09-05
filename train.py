@@ -7,7 +7,7 @@ from models.unet import Unet
 from models.unet3plus import Unet_3plus
 from models.newmodel import unetmodel
 from focal_loss import SparseCategoricalFocalLoss
-from utils.datapreparation import my_division_data, article_division_data, penobscot_data, limited_training_data
+from utils.datapreparation import my_division_data, article_division_data, penobscot_data, limited_training_data, smart_training_data
 from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
 
@@ -38,7 +38,7 @@ def get_args():
     parser.add_argument('--sizetrainy', type=int, default=192, help="size of x dimension of training for progressive training")
     parser.add_argument('--dropout', type=float, default=0, help="Delta for call back function")
     parser.add_argument('--test_pos', type=str, default="end", help='position of the test data relative to the data not used for training, "start,mid or end"')
-
+    parser.add_argument('--num_extra_train', type=int, default=1, help="Number of extra slices classified to improve training")
 
     return parser.parse_args()
 
@@ -60,10 +60,13 @@ if __name__ == '__main__':
       train_image,train_label, test_image, test_label, val_image, val_label=penobscot_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
   elif(args.dataset==2):
       num_classes=6
-      train_image,train_label, test_image, test_label, val_image, val_label=article_division_data(shape=(slice_shape1,slice_shape2), strideval=(230,14), stridetrain=(stride1,stride2))
+      train_image,train_label, test_image, test_label, val_image, val_label=article_division_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2))
   elif(args.dataset==3):
       num_classes=6
-      train_image,train_label, test_image, test_label, val_image, val_label=limited_training_data(shape=(slice_shape1,slice_shape2), strideval=(230,14), stridetrain=(stride1,stride2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, test_pos=args.test_pos)
+      train_image,train_label, test_image, test_label, val_image, val_label=limited_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, test_pos=args.test_pos)
+  elif(args.dataset==4):
+      num_classes=6
+      train_image,train_label, test_image, test_label, val_image, val_label=smart_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, num_extra_train=args.num_extra_train)
 
 
 

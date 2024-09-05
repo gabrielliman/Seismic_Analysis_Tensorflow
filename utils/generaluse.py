@@ -7,3 +7,13 @@ def closest_odd_number(float_number):
         return nearest_integer + 1
     else:
         return nearest_integer
+    
+def get_equal_limits(start,end,num_limits):
+    step_size = (start - end) / (num_limits + 1)
+
+    limits = []
+    for i in range(1, num_limits + 1):
+        limit = end + i * step_size
+        limits.append(limit)
+
+    return limits
