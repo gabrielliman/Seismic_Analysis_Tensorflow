@@ -7,7 +7,7 @@ from models.unet import Unet
 from models.unet3plus import Unet_3plus
 from models.newmodel import unetmodel
 from focal_loss import SparseCategoricalFocalLoss
-from utils.datapreparation import my_division_data, article_division_data, penobscot_data, limited_training_data, smart_training_data
+from utils.datapreparation import my_division_data, article_division_data, penobscot_data, limited_training_data, smart_training_data, slices_for_training
 from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
 
@@ -67,7 +67,9 @@ if __name__ == '__main__':
   elif(args.dataset==4):
       num_classes=6
       train_image,train_label, test_image, test_label, val_image, val_label=smart_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, num_extra_train=args.num_extra_train)
-
+  elif(args.dataset==5):
+      num_classes=6
+      train_image,train_label, test_image, test_label, val_image, val_label=slices_for_training(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), num_train=args.num_extra_train)
 
 
   if args.gpuID == -1:

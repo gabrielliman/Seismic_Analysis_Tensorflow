@@ -6,6 +6,7 @@ from tabulate import tabulate
 def seisfacies_predict(model, test_image): 
     if model.name=="unet3plus":
         predictions=[]
+        #se
         for image in range(0,test_image.shape[0], 100):
             limit=np.min([test_image.shape[0], (image+100)])
             prediction=model.predict(test_image[image:limit])[-1]
@@ -17,8 +18,9 @@ def seisfacies_predict(model, test_image):
         return predictions
     else:
         predictions=[]
-        for image in range(0,test_image.shape[0], 100):
-            limit=np.min([test_image.shape[0], (image+100)])
+        size=1000 #lower this if you have an memory overload in test
+        for image in range(0,test_image.shape[0], size):
+            limit=np.min([test_image.shape[0], (image+size)])
             prediction=model.predict(test_image[image:limit])
             prediction=np.argmax(prediction, axis=3)
             if image==0:
