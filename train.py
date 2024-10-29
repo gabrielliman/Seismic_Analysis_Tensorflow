@@ -5,12 +5,21 @@ import os
 from models.attention import Attention_unet
 from models.unet import Unet
 from models.unet3plus import Unet_3plus
-from models.newmodel import unetmodel
+from models.bridgenet import FlexibleBridgeNet
+from models.efficientNetB1 import EfficientNetB1
 from focal_loss import SparseCategoricalFocalLoss
-from utils.datapreparation import my_division_data, article_division_data, penobscot_data, limited_training_data, smart_training_data, slices_for_training, limited_training_data_fixed_test_val
+from utils.datapreparation import *
 from utils.prediction import make_prediction
 import matplotlib.pyplot as plt
 
+
+
+from network.CFPNetM import CFPNetM
+from network.DCUNet import DCUNet
+from network.ENet import ENet
+from network.ESPNet import ESPNet
+from network.ICNet import ICNet
+from network.MultiResUNet import MultiResUnet
 
 def get_args():
     parser = argparse.ArgumentParser(description='Train the UNet on images and target masks')
@@ -73,6 +82,13 @@ if __name__ == '__main__':
   elif(args.dataset==7):
       num_classes=6
       train_image,train_label, test_image, test_label, val_image, val_label=limited_training_data_fixed_test_val(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, test_pos=args.test_pos)
+  elif(args.dataset==8):
+      num_classes=8
+      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_smart_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, num_extra_train=args.num_extra_train)
+  elif (args.dataset==9):
+      num_classes=8
+      train_image,train_label, test_image, test_label, val_image, val_label=penobscot_slices_for_training(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), num_train=args.num_extra_train)
+  
 
   if args.gpuID == -1:
       os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -91,12 +107,37 @@ if __name__ == '__main__':
 
   #Definition of Models
   if(args.model==0):
-    model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=filters, classes=num_classes)
+    model = Unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=filters, classes=num_classes,kernel_size=args.kernel,dropout_rate=args.dropout)
   elif(args.model==1):
-    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=filters, classes=num_classes)
+    model = Unet_3plus(tam_entrada=(slice_shape1, slice_shape2, 1), n_filters=filters, classes=num_classes,kernel_size=args.kernel,dropout_rate=args.dropout)
   elif(args.model==2):
     model = Attention_unet(tam_entrada=(slice_shape1, slice_shape2, 1), num_filtros=filters, classes=num_classes,kernel_size=args.kernel,dropout_rate=args.dropout)
+  elif(args.model==3):
+    #NOT WORKING
+    model = FlexibleBridgeNet(input_size=(slice_shape1, slice_shape2, 1),up_down_times=5, Y_channels=1, kernel_size=args.kernel,
+                              kernels_all=[16, 32, 64, 128, 256, 512], conv2act_repeat=2, res_case=0,
+                              res_number=0)
+  elif(args.model==4):
+     model = CFPNetM(slice_shape1, slice_shape2, 1, num_classes)
 
+  elif(args.model==5):
+     model = DCUNet(slice_shape1, slice_shape2, 1, num_classes)
+
+  elif(args.model==6):
+     model = ENet(slice_shape1, slice_shape2, 1, num_classes)
+
+  elif(args.model==7):
+     model = ESPNet(slice_shape1, slice_shape2, 1, num_classes)
+
+  elif(args.model==8):
+     model = ICNet(slice_shape1, slice_shape2, 1, num_classes)
+
+  elif(args.model==9):
+     model = MultiResUnet(slice_shape1, slice_shape2, 1, num_classes)
+     
+  elif(args.model==10):
+     model = EfficientNetB1(slice_shape1,slice_shape2, 1, num_classes)
+     
   checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name +'.weights.h5'
 
   if not os.path.exists('./checkpoints'):

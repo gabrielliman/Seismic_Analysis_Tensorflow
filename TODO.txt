@@ -1,0 +1,57 @@
+Implementar
+    LEDNET
+
+baseline
+    Penobscot
+
+    Parihaka
+
+limited training data END
+192x192,235x216 278x240 321x264 364x288 407x312 450x336 493x360 536x384 579x408
+    Parihaka
+        UNet
+        BridgeNet
+        UNet3+
+        ESPNet
+        ENet
+        ICNet
+        CPFNetM
+        LWBNA
+192x192,235x216 278x240 321x264 364x288 407x312 450x336 493x360 536x384 579x408
+    Penobscot
+        UNet
+        BridgeNet
+        UNet3+
+        Attention
+        ESPNet
+        ENet
+        ICNet
+        CPFNetM
+        LWBNA
+
+smart training division
+    Penobscot
+        LWBAUNET
+    Parihaka
+        LWBAUNET
+
+only slices
+    Penobscot
+        Attention -- no script
+        UNet -- no script
+        Unet3+ -- no script
+        LWBAUNET
+        CPFNetM -- no script
+        ENet -- no script
+        ESPNet -- no script
+        ICNet -- no script
+        EfficientNet B1 -- no script
+    Parihaka
+        UNet -- no script
+        Unet3+ -- no script
+        LWBAUNET
+        CPFNetM -- no script
+        ENet -- no script
+        ESPNet -- no script
+        ICNet -- no script
+        EfficientNet B1 -- no script
