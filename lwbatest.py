@@ -32,7 +32,6 @@ def my_division_data(shape=(992,192),stridetest=(128,64), strideval=(128,64), st
     labels = read_labels['labels']
     labels[labels==6] = 0
 
-    #fazendo uma pequena mudança porque eu acho q tava desperdiçando uns dados a toa (tava sem interseção entre crossline e inline no teste e validacao, vou colocar)
     testcrossline=seis_data[:,702:782,:]
     testinline=seis_data[:,:,510:590]
     testcrossline_label=labels[:,702:782,:]

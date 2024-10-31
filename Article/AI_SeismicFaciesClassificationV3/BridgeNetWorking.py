@@ -50,6 +50,27 @@ parser.add_argument('--conv2act_repeat', default=2, type=int, help='conv2act_rep
 parser.add_argument('--reproduce', default=1, type=int, help='reproduce')
 parser.add_argument('--res_case', default=0, type=int, help='res_case')
 parser.add_argument('--res_number', default=0, type=int, help='res_number')
+
+
+
+
+parser.add_argument('--optimizer', '-o', metavar='O', type=int, default=0, help="Choose optimizer, 0: Adam, 1: SGD, 2: RMS")
+parser.add_argument('--name', '-n', type=str, default="default", help='Model name for saving')
+parser.add_argument('--stride1', type=int, default=32, help="Stride in first dimension for train images")
+parser.add_argument('--stride2', type=int, default=32, help="Stride in second dimension for train images")
+parser.add_argument('--stridetest1', type=int, default=32, help="Stride in first dimension for test images")
+parser.add_argument('--stridetest2', type=int, default=32, help="Stride in second dimension for test images")
+parser.add_argument('--slice_shape1', '-s1',dest='slice_shape1', metavar='S', type=int, default=992, help='Shape 1 of the image slices')
+parser.add_argument('--slice_shape2', '-s2',dest='slice_shape2', metavar='S', type=int, default=576, help='Shape 2 of the image slices')
+parser.add_argument('--delta', '-d', type=float, default=1e-4, help="Delta for call back function")
+parser.add_argument('--patience', '-p', dest='patience', metavar='P', type=int, default=10, help="Patience for callback function")
+parser.add_argument('--folder', '-f', type=str, default="default_folder", help='Name of the folder where the results will be saved')
+parser.add_argument('--dataset', type=int, default=0, help="0: Parihaka 1: Penobscot")
+parser.add_argument('--sizetrainx', type=int, default=192, help="size of x dimension of training for progressive training")
+parser.add_argument('--sizetrainy', type=int, default=192, help="size of x dimension of training for progressive training")
+parser.add_argument('--test_pos', type=str, default="end", help='position of the test data relative to the data not used for training, "start,mid or end"')
+parser.add_argument('--num_extra_train', type=int, default=1, help="Number of extra slices classified to improve training")
+
 args = parser.parse_args()
 print('args.loss_used: ' + str(args.loss_used))
 if args.loss_used == 5:
@@ -76,7 +97,7 @@ elif args.gpuID == 1:
 ################################################################################
 disk_ID_data = args.training_data_disk
 disk_ID_model = args.models_disk
-#module_name = '/scratch/nunes/data_parihaka_article_mydivision'
+
 module_name = '/scratch/nunes/data_parihaka_article'
 module_data_dir = module_name
 module_model_dir = module_name
@@ -93,12 +114,6 @@ models_dir = module_model_dir + '/' + 'models'
 if not os.path.exists(models_dir):
     os.mkdir(models_dir)
 
-################################################################################
-# model_folder_name = f'patchR{args.patch_rows:04d}C{args.patch_cols:04d}_batch{args.batch_size:03d}_number{args.training_number}_stride{args.stride[0]}_{args.stride[1]}' \
-#                     f'_lr{round(args.lr * 10000000)}_kSize{args.kernel_size:02d}_ResCase{args.res_case}_ResNo{args.res_number:01d}_Net{args.BridgeNet_used:01d}_Crep{args.conv2act_repeat:01d}' \
-#                     f'_Repro{args.reproduce:02d}' + '_kernels' + (str(args.kernels_all[0:(args.BridgeNet_used + 1)])[1:-1]).replace(', ', '_')
-
-# print(model_folder_name)
 
 model_log_dir = models_dir #+ '/' + model_folder_name
 
@@ -115,75 +130,13 @@ def lr_scheduler(epoch):
 
 
 if __name__ == '__main__':
-    # ############################################################################
-    # file_suffix = 'bin'
-    # available_training_number = findFileNumber(training_data_path, file_suffix)
-    # print('available_training_number: ' + str(available_training_number))
-    # available_training_number = int(available_training_number / 2)
-    # print('available_training_number: ' + str(available_training_number))
-    # if available_training_number == 0:
-    #     print('Error! No training data there!')
-    #     exit(1)
-    # elif available_training_number > 0 and available_training_number < args.training_number:
-    #     print('Warning! available sample number < training number!')
-    #     args.training_number = available_training_number
-
-    # actual_training_number = (args.training_number // args.batch_size) * args.batch_size
-    # print('actual_training_number: ' + str(actual_training_number))
-
-    # steps_per_epoch = (actual_training_number // args.batch_size)
-    # txt_data_writer(model_log_dir + '/' + data_time_str + '_arguments' + '.txt', args)
-
-    # ############################################################################
-    # available_validation_number = findFileNumber(validation_data_path, file_suffix)
-    # available_validation_number = int(available_validation_number / 2)
-    # print('available_validation_number: ' + str(available_validation_number))
-    # if available_validation_number == 0:
-    #     print('Error! No validation data there!')
-    # validation_X = np.zeros(shape=[available_validation_number, args.patch_rows, args.patch_cols, X_channels], dtype='float32')
-    # validation_Y = np.zeros(shape=[available_validation_number, args.patch_rows, args.patch_cols, args.Y_channels], dtype='float32')
-
-    # for j in range(available_validation_number):
-    #     validation_X_dataID = validation_data_dir + '/' + format(j + 1, '011d') + 'X.bin'
-    #     validation_Y_dataID = validation_data_dir + '/' + format(j + 1, '011d') + 'Y.bin'
-    #     validation_X_data = bin_data_reader2D_float32(validation_X_dataID, args.patch_rows, args.patch_cols, X_channels, 1)
-    #     validation_Y_data = bin_data_reader2D_float32(validation_Y_dataID, args.patch_rows, args.patch_cols, args.Y_channels, 1)
-    #     validation_X[j] = validation_X_data[0]
-    #     validation_Y[j] = validation_Y_data[0]
-    #     '''
-    #     print('validation_X min: ' + str(            np.min(validation_X[j])) + ' max: ' + str(np.max(validation_X[j])))
-    #     print('validation_Y min: ' + str(            np.min(validation_Y[j])) + ' max: ' + str(np.max(validation_Y[j])))
-    #     '''
-    #     del validation_X_dataID, validation_X_data, validation_Y_dataID, validation_Y_data
-
-    # validation_X = validation_X / args.X_normal
-    # if Y_1:
-    #     validation_Y = validation_Y - 1
-    # if args.plot_show:
-    #     plot_1st_rand_lst_XandY_SFC(validation_X, validation_Y)
-
-    # if args.plot_show:
-    #     plt.show()
-    ############################################################################
     start_time = time.time()
-    model = FlexibleBridgeNet(up_down_times=args.BridgeNet_used, Y_channels=args.Y_channels_model, kernel_size=args.kernel_size,
+    model = FlexibleBridgeNet(input_size=(992,192,1),up_down_times=args.BridgeNet_used, Y_channels=args.Y_channels_model, kernel_size=args.kernel_size,
                               kernels_all=args.kernels_all[0:(args.BridgeNet_used + 1)], conv2act_repeat=args.conv2act_repeat, res_case=args.res_case,
                               res_number=args.res_number)
 
     print('kernels_all: ' + str(args.kernels_all[0:(args.BridgeNet_used + 1)]))
 
-    #model.summary()
-
-    ############################################################################
-    # if args.continue_train:
-    #     initial_epoch = findLastCheckpoint(model_log_dir=model_log_dir)
-    #     if initial_epoch > 0:
-    #         print('resuming by loading epoch %03d' % initial_epoch)
-    #         model = load_model(os.path.join(model_log_dir, 'model_%03d.hdf5' % initial_epoch), compile=False)
-    # else:
-    #     initial_epoch = 0
-
-    ############################################################################
     # Regression Loss Function
     import tensorflow as tf
     if args.loss_used == 1:
@@ -197,30 +150,19 @@ if __name__ == '__main__':
     # Multi-class Classification Loss
     elif args.loss_used == 5:
         loss_used = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-        # 如果y_pred是经过softmax函数之后的输出，则from_logits=False
     elif args.loss_used == 6:
         loss_used = 'categorical_crossentropy'
 
-    # 在Keras中，compile主要完成损失函数和优化器的一些配置，是为训练服务的。
+
     model.compile(optimizer=Adam(learning_rate=args.lr), loss=loss_used, metrics=['accuracy'])
-    # optimizer设定所选用的优化器函数
-    # loss设定所选用的损失函数
-    # metrics设定训练过程中的评价准则
-
-    # use call back functions
-    # checkpointer = ModelCheckpoint(os.path.join(model_log_dir, 'model_{epoch:03d}.keras'), verbose=1, save_freq='epoch')
-    # csv_logger = CSVLogger(os.path.join(model_log_dir, 'log.csv'), append=True, separator=',')
-    # lr_scheduler = LearningRateScheduler(lr_scheduler)
-    # tensorboard = TensorBoard(log_dir=model_log_dir, histogram_freq=0, write_images=True)
-
 
 
 
 
     from myutils.prediction import make_prediction
 
-    from myutils.datapreparation import my_division_data, article_division_data
-    train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(992,576), stridetrain=(15,5), strideval=(230,14), stridetest=(230,14))
+    from myutils.datapreparation import my_division_data
+    train_image,train_label, test_image, test_label, val_image, val_label=my_division_data(shape=(992,192), stridetrain=(128,64), strideval=(128,64), stridetest=(128,64))
 
 
     actual_training_number = (len(train_image) // args.batch_size) * args.batch_size
@@ -238,29 +180,11 @@ if __name__ == '__main__':
         mode='max',
         save_best_only=True)]
 
-    # 该过程来启动人工神经网络的训练
-    # history = model.fit(
-    #     training_data_generator_2D(args.epochs, args.batch_size, training_data_path, available_training_number,
-    #                                actual_training_number, args.patch_rows, args.patch_cols, X_channels,
-    #                                args.Y_channels, Y_1, args.X_normal, model_log_dir), steps_per_epoch=steps_per_epoch,
-    #     epochs=args.epochs, verbose=1, initial_epoch=initial_epoch,
-    #     callbacks=[checkpointer, csv_logger, lr_scheduler, tensorboard], validation_data=(validation_X, validation_Y))
-
 
     history = model.fit(train_image, train_label, steps_per_epoch=steps_per_epoch, batch_size=args.batch_size, epochs=args.epochs,
                         callbacks=callbacks,
                         validation_data=(val_image, val_label))     
 
-
-    # epochs 设定人工神经网络训练多少轮，即看多少遍训练数据
-    # batch_size 设定每次看多少个训练数据
-    # training_data_path 训练数据存放的路径
-    # actual_training_number 设定训练样本数
-    # patch_rows 设定样本数据的高
-    # patch_cols 设定样本数据的宽
-    # steps_per_epoch 在每一轮训练过程中要迭代多少步
-    # verbose 是否在控制台显示训练信息
-    # callbacks 中设定了训练的人工神经网络存储、训练日志、学习率
 
     elapsed_time = time.time() - start_time
     elapsed_time_str = time2HMS(elapsed_time=elapsed_time)

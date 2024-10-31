@@ -17,3 +17,12 @@ def get_equal_limits(start,end,num_limits):
         limits.append(limit)
 
     return limits
+
+import numpy as np
+def scale_to_1(data):
+    min_val = np.min(data)
+    max_val = np.max(data)
+    return (data - min_val) / (max_val - min_val) if max_val > min_val else data
+
+def scale_all_data(data_tuple):
+    return tuple(scale_to_1(np.expand_dims(data,axis=-1)) for data in data_tuple)

@@ -1076,3 +1076,101 @@ def penobscot_smart_training_data(shape=(1024,192),stridetest=(256,64), strideva
     testlabels=np.array(testlabels)
 
     return trainslices, trainlabels, testslices, testlabels, valslices, vallabels
+
+
+def penobscot_limited_training_data(shape=(992,192),stridetest=(128,64), strideval=(128,64), stridetrain=(128,64), sizetrain_x=192, sizetrain_y=192, test_pos='end'):
+    images, masks=read_h5_file('/scratch/nunes/seismic/penobscot.h5')
+    images=scale_to_256(images)
+    images=images.astype(np.uint8)
+
+
+
+
+    seis_data = images.transpose((1, 0, 2))
+    labels = masks.transpose((1, 0, 2))
+
+
+    #(1501,601,401)
+    inicio_area_livre_x=sizetrain_x+60
+    fim_area_livre_x=seis_data.shape[1]
+    meio_area_livre_x=int((fim_area_livre_x-inicio_area_livre_x)/2 + inicio_area_livre_x)
+
+    inicio_area_livre_y=sizetrain_y+60
+    fim_area_livre_y=seis_data.shape[2]
+    meio_area_livre_y=int((fim_area_livre_y-inicio_area_livre_y)/2 + inicio_area_livre_y)
+
+
+    #(541,341)
+    if(test_pos=='end'):
+        test_start_x=fim_area_livre_x-60
+        test_end_x=fim_area_livre_x
+        test_start_y=fim_area_livre_y-60
+        test_end_y=fim_area_livre_y
+    if(test_pos=='start'):
+        test_start_x=inicio_area_livre_x
+        test_end_x=inicio_area_livre_x+60
+        test_start_y=inicio_area_livre_y
+        test_end_y=inicio_area_livre_y+60
+    if(test_pos=='mid'):
+        test_start_x=meio_area_livre_x-30
+        test_end_x=meio_area_livre_x+30
+        test_start_y=meio_area_livre_y-30
+        test_end_y=meio_area_livre_y+30
+        print(test_start_x,test_end_x)
+        print(test_start_y,test_end_y)
+
+    testcrossline=seis_data[:,test_start_x:test_end_x,:]
+    testinline=seis_data[:,:,test_start_y:test_end_y]
+    testcrossline_label=labels[:,test_start_x:test_end_x,:]
+    testinline_label=labels[:,:,test_start_y:test_end_y]
+
+
+    #removing the test data the rest of our data has shape Z=1006 X=702 Y=510
+    valcrossline=seis_data[:,sizetrain_x:sizetrain_x+60,:sizetrain_y+60]
+    valinline=seis_data[:,:sizetrain_x+60,sizetrain_y:sizetrain_y+60]
+    valcrossline_label=labels[:,sizetrain_x:sizetrain_x+60,:sizetrain_y+60]
+    valinline_label=labels[:,:sizetrain_x+60,sizetrain_y:sizetrain_y+60]
+
+
+    ##removing the validation data the rest of our data has shape Z=1006 X=622 Y=430
+    traindata=seis_data[:,:sizetrain_x,:sizetrain_y]
+    trainlabel=labels[:,:sizetrain_x,:sizetrain_y]
+
+
+    #TRAINING
+    trainpatches=[]
+    trainlabels=[]
+    for i in (range(traindata.shape[2])):
+        trainpatches=trainpatches+extract_patches(traindata[:,:,i],(shape),(stridetrain))
+        trainlabels=trainlabels+extract_patches(trainlabel[:,:,i],(shape),(stridetrain))
+    for i in (range(traindata.shape[1])):
+        trainpatches=trainpatches+extract_patches(traindata[:,i,:],(shape),(stridetrain))
+        trainlabels=trainlabels+extract_patches(trainlabel[:,i,:],(shape),(stridetrain))
+    trainslices=np.array(trainpatches)
+    trainlabels=np.array(trainlabels)
+
+    #VALIDATION
+    valpatches=[]
+    vallabels=[]
+    for i in (range(valinline.shape[2])):
+        valpatches=valpatches+extract_patches(valinline[:,:,i],(shape),(strideval))
+        vallabels=vallabels+extract_patches(valinline_label[:,:,i],(shape),(strideval))
+    for i in (range(valcrossline.shape[1])):
+        valpatches=valpatches+extract_patches(valcrossline[:,i,:],(shape),(strideval))
+        vallabels=vallabels+extract_patches(valcrossline_label[:,i,:],(shape),(strideval))
+    valslices=np.array(valpatches)
+    vallabels=np.array(vallabels)
+
+    #TEST
+    testpatches=[]
+    testlabels=[]
+    for i in (range(testinline.shape[2])):
+        testpatches=testpatches+extract_patches(testinline[:,:,i],(shape),(stridetest))
+        testlabels=testlabels+extract_patches(testinline_label[:,:,i],(shape),(stridetest))
+    for i in (range(testcrossline.shape[1])):
+        testpatches=testpatches+extract_patches(testcrossline[:,i,:],(shape),(stridetest))
+        testlabels=testlabels+extract_patches(testcrossline_label[:,i,:],(shape),(stridetest))
+    testslices=np.array(testpatches)
+    testlabels=np.array(testlabels)
+
+    return trainslices, trainlabels, testslices, testlabels, valslices, vallabels

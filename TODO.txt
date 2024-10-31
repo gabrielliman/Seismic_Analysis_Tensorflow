@@ -1,55 +1,144 @@
 Implementar
-    LEDNET
+    LEDNET - Talvez
 
-baseline
+LRP (baseline)
     Penobscot
+        BridgeNet -- no script
+        Attention -- Completo
+        UNet -- Completo
+        Unet3+ -- Completo
+        LWBAUNET -- no script
+        CPFNetM -- Completo
+        ENet -- Completo
+        ESPNet -- Completo
+        ICNet -- Completo
+        EfficientNet B1 -- Completo
+    Parihaka 
+        BridgeNet -- no script
+        Attention -- Completo
+        UNet -- Completo
+        Unet3+ -- Completo
+        LWBAUNET -- Completo
+        CPFNetM -- Completo
+        ENet -- Completo
+        ESPNet -- Completo
+        ICNet -- Completo
+        EfficientNet B1 -- Completo
 
+RPRV (test end)
+    192x192,235x216 278x240 321x264 364x288 407x312 450x336 493x360 536x384 579x408
     Parihaka
-
-limited training data END
-192x192,235x216 278x240 321x264 364x288 407x312 450x336 493x360 536x384 579x408
-    Parihaka
-        UNet
-        BridgeNet
-        UNet3+
-        ESPNet
-        ENet
-        ICNet
-        CPFNetM
-        LWBNA
-192x192,235x216 278x240 321x264 364x288 407x312 450x336 493x360 536x384 579x408
-    Penobscot
-        UNet
-        BridgeNet
-        UNet3+
-        Attention
-        ESPNet
-        ENet
-        ICNet
-        CPFNetM
-        LWBNA
-
-smart training division
-    Penobscot
-        LWBAUNET
-    Parihaka
-        LWBAUNET
-
-only slices
-    Penobscot
-        Attention -- no script
         UNet -- no script
-        Unet3+ -- no script
-        LWBAUNET
+        BridgeNet -- no script
+        UNet3+ -- no script
+        Attention -- Completo
+        ESPNet -- no script
+        ENet -- no script
+        ICNet -- no script
+        CPFNetM -- no script
+        LWBNA -- no script
+        EfficientNetB1 -- no script
+    192x192 221x201 250x210 279x219 308x228 337x237 366x246 395x255 424x264 453x273
+    Penobscot
+        UNet -- no script
+        BridgeNet -- no script
+        UNet3+ -- no script
+        Attention -- no script
+        ESPNet -- no script
+        ENet -- no script
+        ICNet -- no script
+        CPFNetM -- no script
+        LWBNA -- no script
+        EfficientNetB1 -- no script
+
+RPSE (smart)
+    Parihaka
+        192x192 [2,8,32]
+            BridgeNet -- no script
+            Attention -- Completo
+            UNet -- Completo
+            Unet3+ -- Completo
+            LWBAUNET -- no script
+            CPFNetM -- Completo
+            ENet -- Completo
+            ESPNet -- Completo
+            ICNet -- Completo
+            EfficientNet B1 -- Completo
+        321x264 [2,8,32]
+            BridgeNet 
+            Attention
+            UNet
+            Unet3+
+            LWBAUNET 
+            CPFNetM
+            ENet
+            ESPNet
+            ICNet
+            EfficientNet B1
+        450x336 [2,8,32]
+            BridgeNet 
+            Attention
+            UNet
+            Unet3+
+            LWBAUNET 
+            CPFNetM
+            ENet
+            ESPNet
+            ICNet
+            EfficientNet B1
+    Penobscot
+        192x192 [2,8,32]
+            BridgeNet -- no script
+            Attention -- Completo
+            UNet -- Completo
+            Unet3+ -- Completo
+            LWBAUNET -- no script
+            CPFNetM -- Completo
+            ENet -- Completo
+            ESPNet -- Completo
+            ICNet -- Completo
+            EfficientNet B1 -- Completo
+        279x219 [2,8,32]
+            BridgeNet 
+            Attention
+            UNet
+            Unet3+
+            LWBAUNET 
+            CPFNetM
+            ENet
+            ESPNet
+            ICNet
+            EfficientNet B1
+        366x246 [2,8,32]
+            BridgeNet 
+            Attention
+            UNet
+            Unet3+
+            LWBAUNET 
+            CPFNetM
+            ENet
+            ESPNet
+            ICNet
+            EfficientNet B1
+
+EDS (only_train)
+    Parihaka [5,15,25,35,45]
+        BridgeNet -- no script
+        Attention -- Completo
+        UNet -- Completo
+        Unet3+ -- Completo
+        LWBAUNET -- no script
         CPFNetM -- no script
         ENet -- no script
         ESPNet -- no script
         ICNet -- no script
         EfficientNet B1 -- no script
-    Parihaka
+    Penobscot [5,15,25,35,45]
+        BridgeNet -- no script
+        Attention -- no script
         UNet -- no script
         Unet3+ -- no script
-        LWBAUNET
+        LWBAUNET -- no script
         CPFNetM -- no script
         ENet -- no script
         ESPNet -- no script
