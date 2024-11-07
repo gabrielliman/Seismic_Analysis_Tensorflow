@@ -90,8 +90,8 @@ if __name__ == '__main__':
         num_classes=8
         train_image,train_label, test_image, test_label, val_image, val_label=penobscot_slices_for_training(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), num_train=args.num_extra_train)
     elif (args.dataset==10):
-            num_classes=8
-            train_image,train_label, test_image, test_label, val_image, val_label=penobscot_limited_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, test_pos=args.test_pos)
+        num_classes=8
+        train_image,train_label, test_image, test_label, val_image, val_label=penobscot_limited_training_data(shape=(slice_shape1,slice_shape2), stridetrain=(stride1,stride2), strideval=(stride1,stride2), stridetest=(stridetest1,stridetest2), sizetrain_x=args.sizetrainx, sizetrain_y=args.sizetrainy, test_pos=args.test_pos)
 
     print(train_image.shape)
 
@@ -137,6 +137,7 @@ if __name__ == '__main__':
         model = ICNet(slice_shape1, slice_shape2, 1, num_classes)
 
     elif(args.model==9):
+        #NAO FUNCIONA
         model = MultiResUnet(slice_shape1, slice_shape2, 1, num_classes)
         
     elif(args.model==10):
@@ -152,8 +153,8 @@ if __name__ == '__main__':
                 name="my_unet"
             )
         model.build(input_shape=(args.batch_size,slice_shape1, slice_shape2,1))
-        train_image,train_label, test_image, test_label, val_image, val_label = scale_all_data(
-            (train_image,train_label, test_image, test_label, val_image, val_label))
+        train_image, test_image, val_image = scale_all_data(
+            (train_image, test_image, val_image))
         
 
     checkpoint_filepath = './checkpoints/'+args.folder+'/checkpoint_'+args.name +'.weights.h5'
