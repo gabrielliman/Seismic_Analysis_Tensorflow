@@ -2,7 +2,7 @@ pycache
 unused
 # tmp
 #results/*
-obsoleto/*
+obsoleto
 # results_nocheckpoint
 checkpoints/*
 # *.sh
@@ -18,3 +18,5 @@ SeismicData/*
 #scripts/*
 #*.sh
 environment.yml
+Article
+results_old

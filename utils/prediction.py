@@ -3,31 +3,21 @@ import tensorflow as tf
 from tabulate import tabulate
 
 
-def seisfacies_predict(model, test_image): 
-    if model.name=="unet3plus":
-        predictions=[]
-        #se
-        for image in range(0,test_image.shape[0], 100):
-            limit=np.min([test_image.shape[0], (image+100)])
-            prediction=model.predict(test_image[image:limit])[-1]
-            prediction=np.argmax(prediction, axis=3)
-            if image==0:
-                predictions=prediction
-            else:
-                predictions=np.append(predictions, prediction, axis=0)
-        return predictions
-    else:
-        predictions=[]
-        size=1000 #lower this if you have an memory overload in test
-        for image in range(0,test_image.shape[0], size):
-            limit=np.min([test_image.shape[0], (image+size)])
+def seisfacies_predict(model, test_image, argmax=True, batch_size=100): 
+    predictions=[]
+    size=batch_size #lower this if you have an memory overload in test
+    for image in range(0,test_image.shape[0], size):
+        limit=np.min([test_image.shape[0], (image+size)])
+        if model.name=="unet3plus":
+            prediction=model.predict(test_image[image:limit], batch_size=size)[-1]
+        else:
             prediction=model.predict(test_image[image:limit])
-            prediction=np.argmax(prediction, axis=3)
-            if image==0:
-                predictions=prediction
-            else:
-                predictions=np.append(predictions, prediction, axis=0)
-        return predictions
+        if(argmax):prediction=np.argmax(prediction, axis=3)
+        if image==0:
+            predictions=prediction
+        else:
+            predictions=np.append(predictions, prediction, axis=0)
+    return predictions
     
     
 def calculate_accuracy(model, test_image, test_label):
@@ -95,10 +85,12 @@ def calculate_class_info(model, test_image, test_label, num_classes, predicted_l
     total_false_positives = sum(false_positives)
     total_false_negatives = sum(false_negatives)
 
+    accuracy = (predicted_label == test_label).mean()
+
     # Calculate micro F1 score
     micro_f1_score = calculate_micro_f1_score(total_true_positives, total_false_positives, total_false_negatives)
 
-    return accuracy_by_class, micro_f1_score
+    return accuracy_by_class, micro_f1_score, accuracy
 
 def calculate_macro_f1_score(class_info, num_classes=6):
     class_f1 = list(range(0,num_classes))
@@ -115,31 +107,55 @@ def calculate_macro_f1_score(class_info, num_classes=6):
 
     return macro_f1_score, class_f1
 
-def make_prediction(name,folder, model, test_image, test_label, num_classes=6):
+def calculate_iou_per_class(predicted_label, test_label, num_classes):
+    iou_by_class = {}
+    for class_idx in range(num_classes):
+        intersection = np.logical_and(predicted_label == class_idx, test_label == class_idx).sum()
+        union = np.logical_or(predicted_label == class_idx, test_label == class_idx).sum()
+        if union != 0:
+            iou_by_class[class_idx] = intersection / union
+        else:
+            iou_by_class[class_idx] = 0.0
+    return iou_by_class
 
-    predicted_label = seisfacies_predict(model,test_image)
-    if len(test_image.shape)>3:
-        class_info, micro_f1=calculate_class_info(model, tf.squeeze(test_image).numpy(), tf.squeeze(test_label).numpy(), num_classes, predicted_label)
+def calculate_mean_iou(iou_by_class, num_classes):
+    total_iou = sum(iou_by_class.values())
+    return total_iou / num_classes
+
+def make_prediction(name, folder, model, test_image, test_label, num_classes=6):
+    predicted_label = seisfacies_predict(model, test_image)
+    
+    # Ensure the test image and label are squeezed if needed
+    if len(test_image.shape) > 3:
+        class_info, micro_f1, accuracy = calculate_class_info(model, tf.squeeze(test_image).numpy(), tf.squeeze(test_label).numpy(), num_classes, predicted_label)
+        iou_by_class = calculate_iou_per_class(predicted_label, tf.squeeze(test_label).numpy(), num_classes)
     else:
-        class_info, micro_f1=calculate_class_info(model, test_image, test_label, num_classes, predicted_label)
-    macro_f1, class_f1=calculate_macro_f1_score(class_info, num_classes)
+        class_info, micro_f1, accuracy = calculate_class_info(model, test_image, test_label, num_classes, predicted_label)
+        iou_by_class = calculate_iou_per_class(predicted_label, test_label, num_classes)
+    
+    macro_f1, class_f1 = calculate_macro_f1_score(class_info, num_classes)
+    
+    # Calculate full IoU (mIoU)
+    mean_iou = calculate_mean_iou(iou_by_class, num_classes)
 
-    data=[]
+    data = []
     for i in range(len(class_info)):
-        data.append(["Classe "+str(i)] + class_info[i]+[class_f1[i]])
+        data.append([
+            "Classe " + str(i), 
+            class_info[i][0],  # Accuracy
+            class_info[i][1],  # Precision
+            class_info[i][2],  # Recall
+            class_f1[i],       # F1 Score
+            iou_by_class[i]    # IoU Score
+        ])
 
-  
-    #define header names
-    col_names = ["Classe","Accuracy", "Precision", 'Recall', 'F1 score']
-    f = open("results/"+folder+"/tables/table_"+name+".txt", "w")
-    f.write(tabulate(data, headers=col_names, tablefmt="fancy_grid",floatfmt=".4f"))
-    texto="\nMacro F1 "+ str(macro_f1) + "\nMicro F1 " + str(micro_f1)
-    f.write(texto)
-    # results=model.evaluate(test_image,test_label)
-    # if model.name=="unet3plus":
-    #         results_str="\nTest loss " + str(results[5])+ "\nTest acc " + str(results[-1])
-    # else:
-    #     results_str="\nTest loss " + str(results[0])+ "\nTest acc " + str(results[1])
-    # f.write(results_str)
-    f.close()
+    # Define header names
+    col_names = ["Classe", "Accuracy", "Precision", "Recall", "F1 Score", "IoU"]
+    
+    # Save results to a text file
+    with open(f"results/{folder}/tables/table_{name}.txt", "w", encoding="utf-8") as f:
+        f.write(tabulate(data, headers=col_names, tablefmt="fancy_grid", floatfmt=".4f"))
+        texto = f"\nMacro F1: {macro_f1:.4f}\nAccuracy: {accuracy:.4f}\nMicro F1: {micro_f1:.4f}\nMean IoU (mIoU): {mean_iou:.4f}"
+        f.write(texto)
 
+    print(f"Mean IoU (mIoU): {mean_iou:.4f}")
